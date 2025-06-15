@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct ChoosieApp: App {
+    @ObservedObject private var userManager = UserManager.shared
+    @State private var path = NavigationPath()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack(path: $path) {
+                if userManager.isSetupComplete {
+                    HomeView(path: $path)
+                } else {
+                    UserSetupView(path: $path)
+                }
+            }
         }
     }
 }
