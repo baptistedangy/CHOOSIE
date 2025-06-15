@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		415F1AB62DFEFD89004F3997 /* PBXContainerItemProxy */ = {
+		41E3DB092DFF35050036915E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 415F1A9C2DFEFD88004F3997 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 415F1AA32DFEFD88004F3997;
-			remoteInfo = Moovie;
+			remoteGlobalIDString = 41E3DAF72DFF35040036915E;
+			remoteInfo = Choosie;
 		};
-		415F1AC02DFEFD89004F3997 /* PBXContainerItemProxy */ = {
+		41E3DB132DFF35050036915E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 415F1A9C2DFEFD88004F3997 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 415F1AA32DFEFD88004F3997;
-			remoteInfo = Moovie;
+			remoteGlobalIDString = 41E3DAF72DFF35040036915E;
+			remoteInfo = Choosie;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		415F1AA42DFEFD88004F3997 /* Moovie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Moovie.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		415F1AB52DFEFD89004F3997 /* MoovieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoovieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		415F1ABF2DFEFD89004F3997 /* MoovieUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoovieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		41E3DAF82DFF35040036915E /* Choosie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Choosie.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		41E3DB082DFF35050036915E /* ChoosieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChoosieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		41E3DB122DFF35050036915E /* ChoosieUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChoosieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,24 +45,39 @@
 			path = ChoosieUITests;
 			sourceTree = "<group>";
 		};
+		41E3DAF92DFF35040036915E /* Choosie */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Choosie;
+			sourceTree = "<group>";
+		};
+		41E3DB0B2DFF35050036915E /* ChoosieTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChoosieTests;
+			sourceTree = "<group>";
+		};
+		41E3DB152DFF35050036915E /* ChoosieUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ChoosieUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		415F1AA12DFEFD88004F3997 /* Frameworks */ = {
+		41E3DAF52DFF35040036915E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1AB22DFEFD89004F3997 /* Frameworks */ = {
+		41E3DB052DFF35050036915E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1ABC2DFEFD89004F3997 /* Frameworks */ = {
+		41E3DB0F2DFF35050036915E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -78,6 +93,9 @@
 				415F1AA62DFEFD88004F3997 /* Choosie */,
 				415F1AB82DFEFD89004F3997 /* ChoosieTests */,
 				415F1AC22DFEFD89004F3997 /* ChoosieUITests */,
+				41E3DAF92DFF35040036915E /* Choosie */,
+				41E3DB0B2DFF35050036915E /* ChoosieTests */,
+				41E3DB152DFF35050036915E /* ChoosieUITests */,
 				415F1AA52DFEFD88004F3997 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +103,9 @@
 		415F1AA52DFEFD88004F3997 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				415F1AA42DFEFD88004F3997 /* Moovie.app */,
-				415F1AB52DFEFD89004F3997 /* MoovieTests.xctest */,
-				415F1ABF2DFEFD89004F3997 /* MoovieUITests.xctest */,
+				41E3DAF82DFF35040036915E /* Choosie.app */,
+				41E3DB082DFF35050036915E /* ChoosieTests.xctest */,
+				41E3DB122DFF35050036915E /* ChoosieUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,72 +113,72 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		415F1AA32DFEFD88004F3997 /* Moovie */ = {
+		41E3DAF72DFF35040036915E /* Choosie */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 415F1AC92DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "Moovie" */;
+			buildConfigurationList = 41E3DB202DFF35050036915E /* Build configuration list for PBXNativeTarget "Choosie" */;
 			buildPhases = (
-				415F1AA02DFEFD88004F3997 /* Sources */,
-				415F1AA12DFEFD88004F3997 /* Frameworks */,
-				415F1AA22DFEFD88004F3997 /* Resources */,
+				41E3DAF42DFF35040036915E /* Sources */,
+				41E3DAF52DFF35040036915E /* Frameworks */,
+				41E3DAF62DFF35040036915E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AA62DFEFD88004F3997 /* Choosie */,
+				41E3DAF92DFF35040036915E /* Choosie */,
 			);
-			name = Moovie;
+			name = Choosie;
 			packageProductDependencies = (
 			);
-			productName = Moovie;
-			productReference = 415F1AA42DFEFD88004F3997 /* Moovie.app */;
+			productName = Choosie;
+			productReference = 41E3DAF82DFF35040036915E /* Choosie.app */;
 			productType = "com.apple.product-type.application";
 		};
-		415F1AB42DFEFD89004F3997 /* MoovieTests */ = {
+		41E3DB072DFF35050036915E /* ChoosieTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 415F1ACC2DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "MoovieTests" */;
+			buildConfigurationList = 41E3DB212DFF35050036915E /* Build configuration list for PBXNativeTarget "ChoosieTests" */;
 			buildPhases = (
-				415F1AB12DFEFD89004F3997 /* Sources */,
-				415F1AB22DFEFD89004F3997 /* Frameworks */,
-				415F1AB32DFEFD89004F3997 /* Resources */,
+				41E3DB042DFF35050036915E /* Sources */,
+				41E3DB052DFF35050036915E /* Frameworks */,
+				41E3DB062DFF35050036915E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				415F1AB72DFEFD89004F3997 /* PBXTargetDependency */,
+				41E3DB0A2DFF35050036915E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AB82DFEFD89004F3997 /* ChoosieTests */,
+				41E3DB0B2DFF35050036915E /* ChoosieTests */,
 			);
-			name = MoovieTests;
+			name = ChoosieTests;
 			packageProductDependencies = (
 			);
-			productName = MoovieTests;
-			productReference = 415F1AB52DFEFD89004F3997 /* MoovieTests.xctest */;
+			productName = ChoosieTests;
+			productReference = 41E3DB082DFF35050036915E /* ChoosieTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		415F1ABE2DFEFD89004F3997 /* MoovieUITests */ = {
+		41E3DB112DFF35050036915E /* ChoosieUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 415F1ACF2DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "MoovieUITests" */;
+			buildConfigurationList = 41E3DB222DFF35050036915E /* Build configuration list for PBXNativeTarget "ChoosieUITests" */;
 			buildPhases = (
-				415F1ABB2DFEFD89004F3997 /* Sources */,
-				415F1ABC2DFEFD89004F3997 /* Frameworks */,
-				415F1ABD2DFEFD89004F3997 /* Resources */,
+				41E3DB0E2DFF35050036915E /* Sources */,
+				41E3DB0F2DFF35050036915E /* Frameworks */,
+				41E3DB102DFF35050036915E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				415F1AC12DFEFD89004F3997 /* PBXTargetDependency */,
+				41E3DB142DFF35050036915E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AC22DFEFD89004F3997 /* ChoosieUITests */,
+				41E3DB152DFF35050036915E /* ChoosieUITests */,
 			);
-			name = MoovieUITests;
+			name = ChoosieUITests;
 			packageProductDependencies = (
 			);
-			productName = MoovieUITests;
-			productReference = 415F1ABF2DFEFD89004F3997 /* MoovieUITests.xctest */;
+			productName = ChoosieUITests;
+			productReference = 41E3DB122DFF35050036915E /* ChoosieUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -173,16 +191,16 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					415F1AA32DFEFD88004F3997 = {
+					41E3DAF72DFF35040036915E = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					415F1AB42DFEFD89004F3997 = {
+					41E3DB072DFF35050036915E = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 415F1AA32DFEFD88004F3997;
+						TestTargetID = 41E3DAF72DFF35040036915E;
 					};
-					415F1ABE2DFEFD89004F3997 = {
+					41E3DB112DFF35050036915E = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 415F1AA32DFEFD88004F3997;
+						TestTargetID = 41E3DAF72DFF35040036915E;
 					};
 				};
 			};
@@ -200,29 +218,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				415F1AA32DFEFD88004F3997 /* Moovie */,
-				415F1AB42DFEFD89004F3997 /* MoovieTests */,
-				415F1ABE2DFEFD89004F3997 /* MoovieUITests */,
+				41E3DAF72DFF35040036915E /* Choosie */,
+				41E3DB072DFF35050036915E /* ChoosieTests */,
+				41E3DB112DFF35050036915E /* ChoosieUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		415F1AA22DFEFD88004F3997 /* Resources */ = {
+		41E3DAF62DFF35040036915E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1AB32DFEFD89004F3997 /* Resources */ = {
+		41E3DB062DFF35050036915E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1ABD2DFEFD89004F3997 /* Resources */ = {
+		41E3DB102DFF35050036915E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +250,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		415F1AA02DFEFD88004F3997 /* Sources */ = {
+		41E3DAF42DFF35040036915E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1AB12DFEFD89004F3997 /* Sources */ = {
+		41E3DB042DFF35050036915E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		415F1ABB2DFEFD89004F3997 /* Sources */ = {
+		41E3DB0E2DFF35050036915E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,15 +274,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		415F1AB72DFEFD89004F3997 /* PBXTargetDependency */ = {
+		41E3DB0A2DFF35050036915E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 415F1AA32DFEFD88004F3997 /* Moovie */;
-			targetProxy = 415F1AB62DFEFD89004F3997 /* PBXContainerItemProxy */;
+			target = 41E3DAF72DFF35040036915E /* Choosie */;
+			targetProxy = 41E3DB092DFF35050036915E /* PBXContainerItemProxy */;
 		};
-		415F1AC12DFEFD89004F3997 /* PBXTargetDependency */ = {
+		41E3DB142DFF35050036915E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 415F1AA32DFEFD88004F3997 /* Moovie */;
-			targetProxy = 415F1AC02DFEFD89004F3997 /* PBXContainerItemProxy */;
+			target = 41E3DAF72DFF35040036915E /* Choosie */;
+			targetProxy = 41E3DB132DFF35050036915E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -383,15 +401,15 @@
 			};
 			name = Release;
 		};
-		415F1ACA2DFEFD89004F3997 /* Debug */ = {
+		41E3DB1A2DFF35050036915E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Moovie/Moovie.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Choosie/Choosie.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Moovie/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Choosie/Preview Content\"";
 				DEVELOPMENT_TEAM = 26X74AVX6H;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -411,7 +429,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.Moovie;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.Choosie;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -422,15 +440,15 @@
 			};
 			name = Debug;
 		};
-		415F1ACB2DFEFD89004F3997 /* Release */ = {
+		41E3DB1B2DFF35050036915E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Moovie/Moovie.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Choosie/Choosie.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Moovie/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Choosie/Preview Content\"";
 				DEVELOPMENT_TEAM = 26X74AVX6H;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -450,7 +468,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.Moovie;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.Choosie;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -461,7 +479,7 @@
 			};
 			name = Release;
 		};
-		415F1ACD2DFEFD89004F3997 /* Debug */ = {
+		41E3DB1C2DFF35050036915E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -472,19 +490,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.MoovieTests;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.ChoosieTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moovie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moovie";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Choosie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Choosie";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
 		};
-		415F1ACE2DFEFD89004F3997 /* Release */ = {
+		41E3DB1D2DFF35050036915E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -495,19 +513,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.MoovieTests;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.ChoosieTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Moovie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Moovie";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Choosie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Choosie";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
 		};
-		415F1AD02DFEFD89004F3997 /* Debug */ = {
+		41E3DB1E2DFF35050036915E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -517,19 +535,19 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.MoovieUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.ChoosieUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Moovie;
+				TEST_TARGET_NAME = Choosie;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
 		};
-		415F1AD12DFEFD89004F3997 /* Release */ = {
+		41E3DB1F2DFF35050036915E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -539,14 +557,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Bapt.MoovieUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = Bapt.ChoosieUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Moovie;
+				TEST_TARGET_NAME = Choosie;
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
@@ -563,29 +581,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		415F1AC92DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "Moovie" */ = {
+		41E3DB202DFF35050036915E /* Build configuration list for PBXNativeTarget "Choosie" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				415F1ACA2DFEFD89004F3997 /* Debug */,
-				415F1ACB2DFEFD89004F3997 /* Release */,
+				41E3DB1A2DFF35050036915E /* Debug */,
+				41E3DB1B2DFF35050036915E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		415F1ACC2DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "MoovieTests" */ = {
+		41E3DB212DFF35050036915E /* Build configuration list for PBXNativeTarget "ChoosieTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				415F1ACD2DFEFD89004F3997 /* Debug */,
-				415F1ACE2DFEFD89004F3997 /* Release */,
+				41E3DB1C2DFF35050036915E /* Debug */,
+				41E3DB1D2DFF35050036915E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		415F1ACF2DFEFD89004F3997 /* Build configuration list for PBXNativeTarget "MoovieUITests" */ = {
+		41E3DB222DFF35050036915E /* Build configuration list for PBXNativeTarget "ChoosieUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				415F1AD02DFEFD89004F3997 /* Debug */,
-				415F1AD12DFEFD89004F3997 /* Release */,
+				41E3DB1E2DFF35050036915E /* Debug */,
+				41E3DB1F2DFF35050036915E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

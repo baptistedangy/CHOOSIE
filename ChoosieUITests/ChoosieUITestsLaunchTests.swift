@@ -1,13 +1,13 @@
 //
-//  MoovieUITestsLaunchTests.swift
-//  MoovieUITests
+//  ChoosieUITestsLaunchTests.swift
+//  ChoosieUITests
 //
 //  Created by Baptiste Dangy on 15/06/2025.
 //
 
 import XCTest
 
-final class MoovieUITestsLaunchTests: XCTestCase {
+final class ChoosieUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

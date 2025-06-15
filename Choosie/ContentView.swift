@@ -1,9 +1,6 @@
-// Ce fichier n'est plus utilisé. Voir HomeView.swift pour le point d'entrée principal.
-// TODO: Supprimer ce fichier si non utilisé.
-
 //
 //  ContentView.swift
-//  Moovie
+//  Choosie
 //
 //  Created by Baptiste Dangy on 15/06/2025.
 //
