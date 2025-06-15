@@ -14,7 +14,7 @@ struct HomeView: View {
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
@@ -23,7 +23,7 @@ struct HomeView: View {
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.green)
+                    .background(Color.pink)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
@@ -33,8 +33,8 @@ struct HomeView: View {
                     .font(.title3)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .foregroundColor(.blue)
+                    .background(Color.yellow)
+                    .foregroundColor(.black)
                     .cornerRadius(12)
             }
             Spacer()

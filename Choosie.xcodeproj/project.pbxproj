@@ -30,19 +30,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		415F1AA62DFEFD88004F3997 /* Moovie */ = {
+		415F1AA62DFEFD88004F3997 /* Choosie */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Moovie;
+			path = Choosie;
 			sourceTree = "<group>";
 		};
-		415F1AB82DFEFD89004F3997 /* MoovieTests */ = {
+		415F1AB82DFEFD89004F3997 /* ChoosieTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MoovieTests;
+			path = ChoosieTests;
 			sourceTree = "<group>";
 		};
-		415F1AC22DFEFD89004F3997 /* MoovieUITests */ = {
+		415F1AC22DFEFD89004F3997 /* ChoosieUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MoovieUITests;
+			path = ChoosieUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		415F1A9B2DFEFD88004F3997 = {
 			isa = PBXGroup;
 			children = (
-				415F1AA62DFEFD88004F3997 /* Moovie */,
-				415F1AB82DFEFD89004F3997 /* MoovieTests */,
-				415F1AC22DFEFD89004F3997 /* MoovieUITests */,
+				415F1AA62DFEFD88004F3997 /* Choosie */,
+				415F1AB82DFEFD89004F3997 /* ChoosieTests */,
+				415F1AC22DFEFD89004F3997 /* ChoosieUITests */,
 				415F1AA52DFEFD88004F3997 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,7 +108,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AA62DFEFD88004F3997 /* Moovie */,
+				415F1AA62DFEFD88004F3997 /* Choosie */,
 			);
 			name = Moovie;
 			packageProductDependencies = (
@@ -131,7 +131,7 @@
 				415F1AB72DFEFD89004F3997 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AB82DFEFD89004F3997 /* MoovieTests */,
+				415F1AB82DFEFD89004F3997 /* ChoosieTests */,
 			);
 			name = MoovieTests;
 			packageProductDependencies = (
@@ -154,7 +154,7 @@
 				415F1AC12DFEFD89004F3997 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				415F1AC22DFEFD89004F3997 /* MoovieUITests */,
+				415F1AC22DFEFD89004F3997 /* ChoosieUITests */,
 			);
 			name = MoovieUITests;
 			packageProductDependencies = (
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 415F1A9F2DFEFD88004F3997 /* Build configuration list for PBXProject "Moovie" */;
+			buildConfigurationList = 415F1A9F2DFEFD88004F3997 /* Build configuration list for PBXProject "Choosie" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -554,7 +554,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		415F1A9F2DFEFD88004F3997 /* Build configuration list for PBXProject "Moovie" */ = {
+		415F1A9F2DFEFD88004F3997 /* Build configuration list for PBXProject "Choosie" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				415F1AC72DFEFD89004F3997 /* Debug */,
