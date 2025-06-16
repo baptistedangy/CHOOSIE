@@ -3,6 +3,7 @@ import AVFoundation
 
 struct SlotMachineView: View {
     let participants: [String]
+    let amount: Decimal
     let onResult: (Int) -> Void
     @State private var isSpinning = false
     @State private var canSpin = true
@@ -10,19 +11,17 @@ struct SlotMachineView: View {
     @State private var selectedIndex: Int? = nil
     @State private var winnerIndex: Int = 0
     @State private var showContinue = false
-    @State private var currentIndex: Int = 0
-    @State private var timer: Timer? = nil
-    @State private var animationPhase: Int = 0
+    @State private var offset: CGFloat = 0
+    @State private var animationStarted = false
+    @State private var startIdx: Int = 0
+    @State private var displayList: [String] = []
 
-    let repeatCount = 20
-    let rowHeight: CGFloat = 60
-    let fastPhaseTicks = 30
-    let slowPhaseTicks = 30
+    let repeatCount = 30
+    let rowHeight: CGFloat = 50
+    let visibleRows = 3
+    let animationDuration: Double = 3.5
     let soundID: SystemSoundID = 1108 // Son système "jackpot"
 
-    var displayList: [String] {
-        Array(repeating: participants, count: repeatCount).flatMap { $0 }
-    }
     var totalRows: Int { displayList.count }
     var centerRow: Int { totalRows / 2 }
 
@@ -31,29 +30,31 @@ struct SlotMachineView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(Color.gray.opacity(0.15))
-                    .frame(width: 180, height: 120)
+                    .frame(width: 180, height: rowHeight * CGFloat(visibleRows))
                     .shadow(radius: 8)
                 VStack(spacing: 0) {
                     ForEach(0..<totalRows, id: \ .self) { idx in
                         Text(displayList[idx])
-                            .font(.largeTitle)
-                            .fontWeight(centeredIndex == idx ? .bold : .regular)
-                            .foregroundColor(centeredIndex == idx ? .purple : .primary)
+                            .font(.title2)
+                            .fontWeight(centerRow == idx ? .bold : .regular)
+                            .foregroundColor(centerRow == idx ? .purple : .primary)
                             .frame(height: rowHeight)
-                            .opacity(centeredIndex == idx ? 1 : 0.4)
+                            .opacity(centerRow == idx ? 1 : 0.4)
                     }
                 }
-                .offset(y: CGFloat(centerRow - currentIndex) * rowHeight)
+                .offset(y: offset)
+                .frame(height: rowHeight * CGFloat(visibleRows))
                 .clipped()
             }
             if showResult, let idx = selectedIndex {
-                VStack(spacing: 16) {
-                    Text("🎉 C'est \(participants[idx]) qui doit accomplir la mission !")
+                VStack(spacing: 20) {
+                    Text("🎉 \(participants[idx]) a été désigné pour accomplir la mission et a reçu \(amountFormatter(amount)) € !")
                         .font(.title2)
                         .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
                         .foregroundColor(.purple)
-                        .padding(.top, 24)
-                    Button("Continuer") {
+                        .padding(.top, 12)
+                    Button("Créer une nouvelle mission") {
                         showContinue = true
                     }
                     .font(.title3)
@@ -66,11 +67,17 @@ struct SlotMachineView: View {
             }
         }
         .onAppear {
-            if canSpin && !isSpinning && !showResult {
-                startSpin()
+            if !animationStarted {
+                animationStarted = true
+                // Générer la liste étendue et choisir le gagnant
+                let extended = Array(repeating: participants, count: repeatCount).flatMap { $0 }
+                displayList = extended
+                let randomStart = Int.random(in: 0..<(extended.count - participants.count * 2))
+                startIdx = randomStart
+                offset = -CGFloat(randomStart - centerRow) * rowHeight
+                startSpin(from: randomStart)
             }
         }
-        .onDisappear { timer?.invalidate() }
         #if os(iOS)
         .fullScreenCover(isPresented: $showContinue) {
             EmptyView()
@@ -82,74 +89,27 @@ struct SlotMachineView: View {
         #endif
     }
 
-    private var centeredIndex: Int {
-        centerRow
-    }
-
-    private func startSpin() {
+    private func startSpin(from: Int) {
         guard canSpin else { return }
         canSpin = false
         isSpinning = true
-        // Choisir le perdant aléatoirement
+        // Choisir le gagnant aléatoirement
         let loserIdx = Int.random(in: 0..<participants.count)
         winnerIndex = loserIdx
-        // Calculer l'index final dans la liste étendue
+        // Calculer l'index final dans la liste étendue pour que le gagnant soit centré
         let finalIdx = centerRow + loserIdx
-        // Phase 1 : défilement rapide
-        var tick = 0
-        var currentDelay = 0.03
-        currentIndex = Int.random(in: 0..<totalRows)
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: currentDelay, repeats: true) { t in
-            tick += 1
-            currentIndex = (currentIndex + 1) % totalRows
-            if tick >= fastPhaseTicks {
-                t.invalidate()
-                // Phase 2 : ralentissement progressif
-                slowSpin(current: currentIndex, to: finalIdx, step: 1, delay: 0.05)
-            }
+        let totalDistance = CGFloat(finalIdx - from) * rowHeight
+        // Animation : phase rapide puis ralentissement (easeOut)
+        withAnimation(.timingCurve(0.1, 0.9, 0.2, 1, duration: animationDuration)) {
+            offset = -CGFloat(finalIdx - centerRow) * rowHeight
         }
-    }
-
-    private func slowSpin(current: Int, to: Int, step: Int, delay: Double) {
-        var idx = current
-        var d = delay
-        let totalSteps = slowPhaseTicks
-        func next(stepNum: Int) {
-            guard stepNum <= totalSteps else {
-                // Phase 3 : arrêt précis
-                finishSpin(finalIdx: to)
-                return
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + d) {
-                idx = (idx + 1) % totalRows
-                currentIndex = idx
-                d += 0.015 // ralentissement progressif
-                next(stepNum: stepNum + 1)
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            isSpinning = false
+            selectedIndex = winnerIndex
+            showResult = true
+            playJackpotEffect()
+            onResult(winnerIndex)
         }
-        next(stepNum: 1)
-    }
-
-    private func finishSpin(finalIdx: Int) {
-        // Animation finale pour s'arrêter pile sur le perdant
-        let steps = (finalIdx - currentIndex + totalRows) % totalRows
-        let baseDelay = 0.07
-        func finalStep(i: Int) {
-            guard i <= steps else {
-                isSpinning = false
-                selectedIndex = winnerIndex
-                showResult = true
-                playJackpotEffect()
-                onResult(winnerIndex)
-                return
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + baseDelay + Double(i) * 0.01) {
-                currentIndex = (currentIndex + 1) % totalRows
-                finalStep(i: i + 1)
-            }
-        }
-        finalStep(i: 1)
     }
 
     private func playJackpotEffect() {
@@ -157,5 +117,13 @@ struct SlotMachineView: View {
         AudioServicesPlaySystemSound(soundID)
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         #endif
+    }
+
+    private func amountFormatter(_ amount: Decimal) -> String {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        formatter.numberStyle = .decimal
+        return formatter.string(for: NSDecimalNumber(decimal: amount)) ?? "0.00"
     }
 } 

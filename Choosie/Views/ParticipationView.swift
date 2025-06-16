@@ -81,7 +81,7 @@ struct ParticipationView: View {
                 viewModel.setLoserAndSaveHistory(loserName: loser.name)
             }
         }) {
-            SlotMachineView(participants: viewModel.participants.map { $0.name }) { loserIdx in
+            SlotMachineView(participants: viewModel.participants.map { $0.name }, amount: viewModel.mission.totalAmount) { loserIdx in
                 slotLoserIndex = loserIdx
                 showSlotMachine = false
             }
