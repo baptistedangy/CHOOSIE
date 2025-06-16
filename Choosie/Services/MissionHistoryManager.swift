@@ -1,64 +1,64 @@
 import Foundation
 
-class TaskHistoryManager: ObservableObject {
-    static let shared = TaskHistoryManager()
-    private let storageKey = "completedTasks"
-    @Published private(set) var tasks: [CompletedTask] = []
+class MissionHistoryManager: ObservableObject {
+    static let shared = MissionHistoryManager()
+    private let storageKey = "completedMissions"
+    @Published private(set) var missions: [CompletedMission] = []
     
     private init() {
         load()
-        if tasks.isEmpty {
-            addSampleTasks()
+        if missions.isEmpty {
+            addSampleMissions()
         }
     }
     
-    func addTask(_ task: CompletedTask) {
-        tasks.append(task)
+    func addMission(_ mission: CompletedMission) {
+        missions.append(mission)
         save()
     }
     
-    func fetchTasks() -> [CompletedTask] {
-        tasks
+    func fetchMissions() -> [CompletedMission] {
+        missions
     }
     
     private func save() {
-        if let data = try? JSONEncoder().encode(tasks) {
+        if let data = try? JSONEncoder().encode(missions) {
             UserDefaults.standard.set(data, forKey: storageKey)
         }
     }
     
     private func load() {
         if let data = UserDefaults.standard.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([CompletedTask].self, from: data) {
-            self.tasks = decoded
+           let decoded = try? JSONDecoder().decode([CompletedMission].self, from: data) {
+            self.missions = decoded
         }
     }
     
-    private func addSampleTasks() {
+    private func addSampleMissions() {
         let userId = UUID(uuidString: UserManager.shared.userId) ?? UUID()
         let now = Date()
-        let samples: [CompletedTask] = [
-            CompletedTask(
+        let samples: [CompletedMission] = [
+            CompletedMission(
                 id: UUID(),
-                taskName: "Courses",
+                missionName: "Courses",
                 totalAmount: 40.0,
                 participants: [UserManager.shared.displayName, "Alex", "Sam"],
                 winner: "Alex",
                 createdBy: userId,
                 date: now.addingTimeInterval(-86400)
             ),
-            CompletedTask(
+            CompletedMission(
                 id: UUID(),
-                taskName: "Nettoyage garage",
+                missionName: "Nettoyage garage",
                 totalAmount: 60.0,
                 participants: ["Jordan", UserManager.shared.displayName, "Charlie"],
                 winner: UserManager.shared.displayName,
                 createdBy: UUID(),
                 date: now.addingTimeInterval(-172800)
             ),
-            CompletedTask(
+            CompletedMission(
                 id: UUID(),
-                taskName: "Sortie poubelles",
+                missionName: "Sortie poubelles",
                 totalAmount: 10.0,
                 participants: ["Morgan", UserManager.shared.displayName],
                 winner: "Morgan",
@@ -66,7 +66,7 @@ class TaskHistoryManager: ObservableObject {
                 date: now.addingTimeInterval(-259200)
             )
         ]
-        self.tasks = samples
+        self.missions = samples
         save()
     }
 } 

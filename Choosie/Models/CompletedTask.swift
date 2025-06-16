@@ -1,8 +1,8 @@
 import Foundation
 
-struct CompletedTask: Identifiable, Codable {
+struct CompletedMission: Identifiable, Codable {
     let id: UUID
-    let taskName: String
+    let missionName: String
     let totalAmount: Double
     let participants: [String]
     let winner: String

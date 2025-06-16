@@ -1,22 +1,17 @@
 import SwiftUI
 
-struct JoinTaskView: View {
+struct JoinMissionView: View {
     @Binding var path: NavigationPath
-    @StateObject private var viewModel = JoinTaskViewModel()
+    @StateObject private var viewModel = JoinMissionViewModel()
     @State private var navigateToParticipation = false
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("Rejoindre une tâche")
+            Text("Rejoindre une mission")
                 .font(.title)
                 .fontWeight(.semibold)
-            TextField("Code de la tâche", text: $viewModel.code)
+            TextField("Code de la mission", text: $viewModel.code)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-#if os(iOS)
-                .textInputAutocapitalization(.characters)
-                .disableAutocorrection(true)
-                .multilineTextAlignment(.center)
-#endif
                 .frame(maxWidth: 200)
             if let error = viewModel.errorMessage {
                 Text(error)
@@ -24,7 +19,7 @@ struct JoinTaskView: View {
                     .font(.caption)
             }
             Button(action: {
-                if viewModel.joinTask() {
+                if viewModel.joinMission() {
                     navigateToParticipation = true
                 }
             }) {
@@ -38,8 +33,8 @@ struct JoinTaskView: View {
             .disabled(!viewModel.canJoin)
             NavigationLink(
                 destination: Group {
-                    if let task = viewModel.foundTask {
-                        ParticipationView(task: task, path: $path)
+                    if let mission = viewModel.foundMission {
+                        ParticipationView(mission: mission, path: $path)
                     } else {
                         EmptyView()
                     }
@@ -56,5 +51,5 @@ struct JoinTaskView: View {
 
 #Preview {
     @State var path = NavigationPath()
-    return JoinTaskView(path: $path)
+    return JoinMissionView(path: $path)
 } 

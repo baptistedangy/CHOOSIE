@@ -9,8 +9,8 @@ struct HomeView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             Spacer()
-            NavigationLink(destination: CreateTaskView(path: $path)) {
-                Text("Créer une tâche")
+            NavigationLink(destination: CreateMissionView(path: $path)) {
+                Text("Créer une mission")
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -18,8 +18,8 @@ struct HomeView: View {
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
-            NavigationLink(destination: JoinTaskView(path: $path)) {
-                Text("Rejoindre une tâche")
+            NavigationLink(destination: JoinMissionView(path: $path)) {
+                Text("Rejoindre une mission")
                     .font(.title2)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -28,7 +28,7 @@ struct HomeView: View {
                     .cornerRadius(12)
             }
             Spacer()
-            NavigationLink(destination: TaskHistoryView()) {
+            NavigationLink(destination: MissionHistoryView()) {
                 Text("Historique")
                     .font(.title3)
                     .frame(maxWidth: .infinity)

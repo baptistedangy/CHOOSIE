@@ -1,45 +1,45 @@
 import SwiftUI
 
-struct TaskHistoryView: View {
-    @ObservedObject private var historyManager = TaskHistoryManager.shared
+struct MissionHistoryView: View {
+    @ObservedObject private var historyManager = MissionHistoryManager.shared
     @ObservedObject private var userManager = UserManager.shared
     
-    var filteredTasks: [CompletedTask] {
-        historyManager.tasks.filter { task in
-            task.createdBy.uuidString == userManager.userId ||
-            task.participants.contains(userManager.displayName) ||
-            task.winner == userManager.displayName
+    var filteredMissions: [CompletedMission] {
+        historyManager.missions.filter { mission in
+            mission.createdBy.uuidString == userManager.userId ||
+            mission.participants.contains(userManager.displayName) ||
+            mission.winner == userManager.displayName
         }
     }
     
     var body: some View {
         VStack {
-            Text("Historique des tâches")
+            Text("Historique des missions")
                 .font(.largeTitle)
                 .padding(.top)
-            if filteredTasks.isEmpty {
+            if filteredMissions.isEmpty {
                 Spacer()
-                Text("Aucune tâche terminée.")
+                Text("Aucune mission terminée.")
                     .foregroundColor(.gray)
                 Spacer()
             } else {
-                List(filteredTasks) { task in
+                List(filteredMissions) { mission in
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
-                            Text(task.taskName)
+                            Text(mission.missionName)
                                 .font(.headline)
                             Spacer()
-                            Text("\(task.totalAmount, specifier: "%.2f") €")
+                            Text("\(mission.totalAmount, specifier: "%.2f") €")
                                 .font(.subheadline)
                         }
                         HStack {
-                            Text("Gagnant : \(task.winner)")
+                            Text("Gagnant : \(mission.winner)")
                                 .font(.subheadline)
                             Spacer()
-                            Text(task.date, style: .date)
+                            Text(mission.date, style: .date)
                                 .font(.caption)
                         }
-                        Text(role(for: task))
+                        Text(role(for: mission))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -50,12 +50,12 @@ struct TaskHistoryView: View {
         .padding(.horizontal)
     }
     
-    private func role(for task: CompletedTask) -> String {
-        if task.createdBy.uuidString == userManager.userId {
+    private func role(for mission: CompletedMission) -> String {
+        if mission.createdBy.uuidString == userManager.userId {
             return "Créateur"
-        } else if task.winner == userManager.displayName {
+        } else if mission.winner == userManager.displayName {
             return "Gagnant"
-        } else if task.participants.contains(userManager.displayName) {
+        } else if mission.participants.contains(userManager.displayName) {
             return "Participant"
         } else {
             return "-"
@@ -64,5 +64,5 @@ struct TaskHistoryView: View {
 }
 
 #Preview {
-    TaskHistoryView()
+    MissionHistoryView()
 } 

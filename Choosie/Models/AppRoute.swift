@@ -1,9 +1,9 @@
 import Foundation
 
 enum AppRoute: Hashable {
-    case createTask
-    case joinTask
+    case createMission
+    case joinMission
     case share(code: String)
-    case participation(task: TaskModel)
+    case participation(mission: MissionModel)
     case history
 } 
