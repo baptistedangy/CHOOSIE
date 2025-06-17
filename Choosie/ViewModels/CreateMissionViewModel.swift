@@ -3,15 +3,10 @@ import Foundation
 class CreateMissionViewModel: ObservableObject {
     @Published var missionName: String = ""
     @Published var generatedCode: String? = nil
-    @Published var drawType: DrawType = .immediate
-    @Published var drawDate: Date? = nil
+    @Published var lastCreatedMission: MissionModel? = nil
 
     var canCreate: Bool {
-        guard !missionName.isEmpty else { return false }
-        if drawType == .scheduled {
-            return drawDate != nil
-        }
-        return true
+        !missionName.isEmpty
     }
 
     func createMission() -> Bool {
@@ -19,13 +14,15 @@ class CreateMissionViewModel: ObservableObject {
         let code = Self.generateUniqueCode()
         self.generatedCode = code
         let mission = MissionModel(
+            id: UUID(),
             name: missionName,
             code: code,
-            inviteCode: code,
-            drawType: drawType,
-            drawDate: drawType == .scheduled ? drawDate : nil
+            inviteCode: UUID().uuidString.prefix(6).uppercased(),
+            loserName: nil,
+            isPending: false
         )
         MissionService.shared.addMission(mission)
+        self.lastCreatedMission = mission
         return true
     }
 

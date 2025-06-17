@@ -79,33 +79,6 @@ struct CreateMissionView: View {
                     .background(Color.choosieCard)
                     .cornerRadius(20)
                     .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
-
-                    HStack {
-                        Text("⏰")
-                            .font(.system(size: 32))
-                            .padding(.trailing, 8)
-                        VStack(alignment: .leading) {
-                            Text("Quand doit avoir lieu le tirage au sort ?")
-                                .font(.headline)
-                            Picker("", selection: $viewModel.drawType) {
-                                Text("📍 Immédiatement").tag(DrawType.immediate)
-                                Text("🕒 À une heure précise").tag(DrawType.scheduled)
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            if viewModel.drawType == .scheduled {
-                                DatePicker("Heure du tirage", selection: Binding(
-                                    get: { viewModel.drawDate ?? Date().addingTimeInterval(3600) },
-                                    set: { viewModel.drawDate = $0 }
-                                ), displayedComponents: .hourAndMinute)
-                                .labelsHidden()
-                                .datePickerStyle(.field)
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color.choosieCard)
-                    .cornerRadius(20)
-                    .shadow(color: Color.choosieTurquoise.opacity(0.08), radius: 8, x: 0, y: 4)
                 }
                 Button(action: {
                     if viewModel.createMission() {
@@ -123,7 +96,7 @@ struct CreateMissionView: View {
                 }
                 .disabled(!viewModel.canCreate || selectedIndex == -1)
                 .padding(.horizontal, 8)
-                NavigationLink(destination: ShareView(code: viewModel.generatedCode ?? "", path: $path), isActive: $navigateToShare) {
+                NavigationLink(destination: ShareView(mission: viewModel.lastCreatedMission, code: viewModel.generatedCode ?? "", path: $path), isActive: $navigateToShare) {
                     EmptyView()
                 }
                 Spacer()
@@ -132,8 +105,6 @@ struct CreateMissionView: View {
             .onAppear {
                 selectedIndex = -1
                 viewModel.missionName = ""
-                viewModel.drawType = .immediate
-                viewModel.drawDate = nil
             }
         }
     }

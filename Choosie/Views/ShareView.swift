@@ -4,10 +4,10 @@ import UIKit
 #endif
 
 struct ShareView: View {
+    var mission: MissionModel?
     let code: String
     @Binding var path: NavigationPath
     @State private var navigateToParticipation = false
-    @State private var mission: MissionModel? = nil
     @State private var showShareSheet = false
     @State private var showCopyAlert = false
     
@@ -68,8 +68,8 @@ struct ShareView: View {
             #endif
             Spacer()
             Button(action: {
-                if let foundMission = MissionService.shared.getMission(by: code) {
-                    self.mission = foundMission
+                if let mission = mission {
+                    MissionService.shared.markMissionAsPending(inviteCode: mission.inviteCode)
                     self.navigateToParticipation = true
                 }
             }) {
@@ -92,7 +92,6 @@ struct ShareView: View {
             ) {
                 EmptyView()
             }
-            Spacer()
         }
         .padding()
     }
@@ -148,5 +147,5 @@ struct MacShareButton: View {
 
 #Preview {
     @State var path = NavigationPath()
-    return ShareView(code: "X4E2LQ", path: $path)
+    return ShareView(mission: nil, code: "X4E2LQ", path: $path)
 } 

@@ -155,5 +155,5 @@ struct ParticipationView: View {
 
 #Preview {
     @State var path = NavigationPath()
-    ParticipationView(mission: MissionModel(name: "Courses", code: "X4E2LQ", inviteCode: "abcd", drawType: .immediate, drawDate: nil), path: $path)
+    ParticipationView(mission: MissionModel(id: UUID(), name: "Courses", code: "X4E2LQ", inviteCode: "abcd", loserName: nil, isPending: false), path: $path)
 } 
