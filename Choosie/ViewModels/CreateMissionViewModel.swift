@@ -2,16 +2,15 @@ import Foundation
 
 class CreateMissionViewModel: ObservableObject {
     @Published var missionName: String = ""
-    @Published var totalAmountString: String = ""
-    @Published var participantCount: Int = 2
     @Published var generatedCode: String? = nil
-    @Published var totalAmount: Decimal = 0
-    @Published var isCustomAmount: Bool = false
+    @Published var drawType: DrawType = .immediate
+    @Published var drawDate: Date? = nil
 
     var canCreate: Bool {
-        guard !missionName.isEmpty,
-              totalAmount > 0,
-              participantCount >= 2 else { return false }
+        guard !missionName.isEmpty else { return false }
+        if drawType == .scheduled {
+            return drawDate != nil
+        }
         return true
     }
 
@@ -19,7 +18,13 @@ class CreateMissionViewModel: ObservableObject {
         guard canCreate else { return false }
         let code = Self.generateUniqueCode()
         self.generatedCode = code
-        let mission = MissionModel(name: missionName, totalAmount: totalAmount, participantCount: participantCount, code: code, inviteCode: code)
+        let mission = MissionModel(
+            name: missionName,
+            code: code,
+            inviteCode: code,
+            drawType: drawType,
+            drawDate: drawType == .scheduled ? drawDate : nil
+        )
         MissionService.shared.addMission(mission)
         return true
     }

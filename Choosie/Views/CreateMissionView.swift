@@ -31,159 +31,110 @@ struct CreateMissionView: View {
     ]
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Créer une mission")
-                .font(.title)
-                .fontWeight(.semibold)
-            Text("Choisissez une mission")
-                .font(.headline)
-            Picker("", selection: $selectedIndex) {
-                Text("Choisis la mission…").tag(-1)
-                ForEach(0..<suggestions.count, id: \ .self) { idx in
-                    Text("\(suggestions[idx].icon)  \(suggestions[idx].name)")
-                        .tag(idx)
-                }
-            }
-            .pickerStyle(MenuPickerStyle())
-            .onChange(of: selectedIndex) { newValue in
-                if newValue == -1 {
-                    viewModel.missionName = ""
-                } else if suggestions[newValue].name == "Autre..." {
-                    viewModel.missionName = customMissionName
-                } else {
-                    viewModel.missionName = suggestions[newValue].name
-                }
-            }
-            if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
-                TextField("Nom de la mission", text: $customMissionName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: customMissionName) { newValue in
-                        if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
-                            viewModel.missionName = newValue
+        ZStack {
+            Color.choosieBackground.ignoresSafeArea()
+            VStack(spacing: 32) {
+                Text("Créer une mission")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.choosieLila)
+                    .padding(.top, 16)
+
+                VStack(spacing: 20) {
+                    HStack {
+                        Text("📝")
+                            .font(.system(size: 32))
+                            .padding(.trailing, 8)
+                        VStack(alignment: .leading) {
+                            Text("Choisissez une mission")
+                                .font(.headline)
+                            Picker("", selection: $selectedIndex) {
+                                Text("Choisis la mission…").tag(-1)
+                                ForEach(0..<suggestions.count, id: \ .self) { idx in
+                                    Text("\(suggestions[idx].icon)  \(suggestions[idx].name)")
+                                        .tag(idx)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                            .onChange(of: selectedIndex) { newValue in
+                                if newValue == -1 {
+                                    viewModel.missionName = ""
+                                } else if suggestions[newValue].name == "Autre..." {
+                                    viewModel.missionName = customMissionName
+                                } else {
+                                    viewModel.missionName = suggestions[newValue].name
+                                }
+                            }
+                            if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
+                                TextField("Nom de la mission", text: $customMissionName)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .onChange(of: customMissionName) { newValue in
+                                        if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
+                                            viewModel.missionName = newValue
+                                        }
+                                    }
+                            }
                         }
                     }
-            }
-            Text("Montant total")
-                .font(.headline)
-            Picker("", selection: $selectedAmountIndex) {
-                Text("Renseigne le montant…").tag(-1)
-                ForEach(0..<amountOptions.count, id: \ .self) { idx in
-                    if idx < amountOptions.count - 1 {
-                        Text("\(amountOptions[idx]) €").tag(idx)
-                    } else {
-                        Text("Autre montant...").tag(idx)
-                    }
-                }
-            }
-            .onChange(of: selectedAmountIndex) { newValue in
-                if newValue == -1 {
-                    viewModel.isCustomAmount = false
-                    viewModel.totalAmount = 0
-                } else if newValue < amountOptions.count - 1 {
-                    viewModel.isCustomAmount = false
-                    viewModel.totalAmount = Decimal(amountOptions[newValue])
-                } else {
-                    viewModel.isCustomAmount = true
-                    viewModel.totalAmount = 0
-                }
-            }
-            if viewModel.isCustomAmount {
-                #if os(iOS)
-                TextField("Autre montant…", text: Binding(
-                    get: { viewModel.totalAmount == 0 ? "" : String(format: "%.2f", NSDecimalNumber(decimal: viewModel.totalAmount).doubleValue) },
-                    set: { newValue in
-                        if let value = Decimal(string: newValue.replacingOccurrences(of: ",", with: ".")) {
-                            viewModel.totalAmount = value
-                        } else {
-                            viewModel.totalAmount = 0
-                        }
-                    })
-                )
-                .keyboardType(.decimalPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                #else
-                TextField("Autre montant…", text: Binding(
-                    get: { viewModel.totalAmount == 0 ? "" : String(format: "%.2f", NSDecimalNumber(decimal: viewModel.totalAmount).doubleValue) },
-                    set: { newValue in
-                        if let value = Decimal(string: newValue.replacingOccurrences(of: ",", with: ".")) {
-                            viewModel.totalAmount = value
-                        } else {
-                            viewModel.totalAmount = 0
-                        }
-                    })
-                )
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                #endif
-            }
-            Text("Nombre de participants")
-                .font(.headline)
-            Picker("", selection: $selectedParticipantIndex) {
-                Text("Choisis le nombre de participants…").tag(-1)
-                ForEach(0..<participantOptions.count, id: \ .self) { idx in
-                    Text("\(participantOptions[idx].value) - \(participantOptions[idx].label)").tag(idx)
-                }
-                Text("Autre...").tag(participantOptions.count)
-            }
-            .pickerStyle(MenuPickerStyle())
-            .onChange(of: selectedParticipantIndex) { newValue in
-                if newValue == -1 {
-                    viewModel.participantCount = 0
-                    showCustomParticipantField = false
-                } else if newValue < participantOptions.count {
-                    viewModel.participantCount = participantOptions[newValue].value
-                    showCustomParticipantField = false
-                } else {
-                    showCustomParticipantField = true
-                }
-            }
-            if showCustomParticipantField {
-                #if os(iOS)
-                TextField("Nombre de participants (2-20)", text: $customParticipantText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .keyboardType(.numberPad)
-                    .onChange(of: customParticipantText) { newValue in
-                        if let val = Int(newValue), val >= 2, val <= 20 {
-                            viewModel.participantCount = val
-                        }
-                    }
-                #else
-                TextField("Nombre de participants (2-20)", text: $customParticipantText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: customParticipantText) { newValue in
-                        if let val = Int(newValue), val >= 2, val <= 20 {
-                            viewModel.participantCount = val
-                        }
-                    }
-                #endif
-            }
-            Button(action: {
-                if viewModel.createMission() {
-                    navigateToShare = true
-                }
-            }) {
-                Text("Créer")
-                    .frame(maxWidth: .infinity)
                     .padding()
-                    .background(viewModel.canCreate ? Color.blue : Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .background(Color.choosieCard)
+                    .cornerRadius(20)
+                    .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
+
+                    HStack {
+                        Text("⏰")
+                            .font(.system(size: 32))
+                            .padding(.trailing, 8)
+                        VStack(alignment: .leading) {
+                            Text("Quand doit avoir lieu le tirage au sort ?")
+                                .font(.headline)
+                            Picker("", selection: $viewModel.drawType) {
+                                Text("📍 Immédiatement").tag(DrawType.immediate)
+                                Text("🕒 À une heure précise").tag(DrawType.scheduled)
+                            }
+                            .pickerStyle(SegmentedPickerStyle())
+                            if viewModel.drawType == .scheduled {
+                                DatePicker("Heure du tirage", selection: Binding(
+                                    get: { viewModel.drawDate ?? Date().addingTimeInterval(3600) },
+                                    set: { viewModel.drawDate = $0 }
+                                ), displayedComponents: .hourAndMinute)
+                                .labelsHidden()
+                                .datePickerStyle(.field)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color.choosieCard)
+                    .cornerRadius(20)
+                    .shadow(color: Color.choosieTurquoise.opacity(0.08), radius: 8, x: 0, y: 4)
+                }
+                Button(action: {
+                    if viewModel.createMission() {
+                        navigateToShare = true
+                    }
+                }) {
+                    Text("Créer")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(viewModel.canCreate ? Color.choosieLila : Color.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(16)
+                        .shadow(color: Color.choosieLila.opacity(0.15), radius: 8, x: 0, y: 4)
+                }
+                .disabled(!viewModel.canCreate || selectedIndex == -1)
+                .padding(.horizontal, 8)
+                NavigationLink(destination: ShareView(code: viewModel.generatedCode ?? "", path: $path), isActive: $navigateToShare) {
+                    EmptyView()
+                }
+                Spacer()
             }
-            .disabled(!viewModel.canCreate || selectedIndex == -1 || selectedAmountIndex == -1 || selectedParticipantIndex == -1)
-            NavigationLink(destination: ShareView(code: viewModel.generatedCode ?? "", path: $path), isActive: $navigateToShare) {
-                EmptyView()
+            .padding()
+            .onAppear {
+                selectedIndex = -1
+                viewModel.missionName = ""
+                viewModel.drawType = .immediate
+                viewModel.drawDate = nil
             }
-            Spacer()
-        }
-        .padding()
-        .onAppear {
-            selectedIndex = -1
-            viewModel.missionName = ""
-            selectedAmountIndex = -1
-            viewModel.totalAmount = 0
-            selectedParticipantIndex = -1
-            viewModel.participantCount = 0
-            showCustomParticipantField = false
-            customParticipantText = ""
         }
     }
 }

@@ -4,6 +4,7 @@ struct Participant: Identifiable {
     let id = UUID()
     let name: String
     var hasPaid: Bool
+    var contribution: Decimal
 }
 
 class ParticipationViewModel: ObservableObject {
@@ -13,12 +14,22 @@ class ParticipationViewModel: ObservableObject {
     @Published var drawResult: (winner: Participant, amount: Decimal)? = nil
 
     var amountPerParticipant: Decimal {
-        guard mission.participantCount > 0 else { return 0 }
-        return (mission.totalAmount / Decimal(mission.participantCount))
+        return 0 // plus de montant par participant
     }
 
     var allPaid: Bool {
         participants.allSatisfy { $0.hasPaid }
+    }
+
+    var totalPot: Decimal {
+        participants.reduce(0) { $0 + $1.contribution }
+    }
+
+    func emoji(for amount: Decimal) -> String {
+        if amount < 2 { return "😇" }
+        if amount > 50 { return "🤑" }
+        if amount > 10 { return "💸" }
+        return "🙂"
     }
 
 #if DEBUG
@@ -27,11 +38,11 @@ class ParticipationViewModel: ObservableObject {
 
     init(mission: MissionModel) {
         self.mission = mission
-        // Le premier participant est l'utilisateur courant
-        self.participants = [Participant(name: "Moi", hasPaid: false)]
+        // Le premier participant est l'utilisateur courant, contribution par défaut à 1
+        self.participants = [Participant(name: "Moi", hasPaid: false, contribution: 1)]
 #if DEBUG
-        // Ajouter des participants fictifs payés pour atteindre le nombre requis
-        let needed = max(0, mission.participantCount - 1)
+        // Ajouter quelques participants fictifs pour le debug, contribution à 2
+        let needed = 2
         var usedNames = Set(["Moi"])
         for _ in 0..<needed {
             var name: String
@@ -39,20 +50,21 @@ class ParticipationViewModel: ObservableObject {
                 name = Self.dummyNames.randomElement() ?? "Invité"
             } while usedNames.contains(name)
             usedNames.insert(name)
-            self.participants.append(Participant(name: name, hasPaid: true))
+            self.participants.append(Participant(name: name, hasPaid: true, contribution: 2))
         }
 #else
-        // En production, tous les participants sont non payés
-        for i in 2...mission.participantCount {
-            self.participants.append(Participant(name: "Participant \(i)", hasPaid: false))
+        // En production, tous les participants sont non payés (exemple statique)
+        for i in 2...3 {
+            self.participants.append(Participant(name: "Participant \(i)", hasPaid: false, contribution: 1))
         }
 #endif
     }
 
-    func pay() {
-        // Marquer l'utilisateur courant comme ayant payé
+    func pay(amount: Decimal) {
+        // Marquer l'utilisateur courant comme ayant payé et enregistrer le montant
         if let idx = participants.firstIndex(where: { $0.name == "Moi" }) {
             participants[idx].hasPaid = true
+            participants[idx].contribution = amount
             hasPaid = true
         }
     }
@@ -61,7 +73,7 @@ class ParticipationViewModel: ObservableObject {
         let paidParticipants = participants.filter { $0.hasPaid }
         guard !paidParticipants.isEmpty else { return }
         if let winner = paidParticipants.randomElement() {
-            drawResult = (winner, mission.totalAmount)
+            drawResult = (winner, 0)
         }
     }
 
@@ -70,7 +82,7 @@ class ParticipationViewModel: ObservableObject {
         let completed = CompletedMission(
             id: UUID(),
             missionName: mission.name,
-            totalAmount: NSDecimalNumber(decimal: mission.totalAmount).doubleValue,
+            totalAmount: 0,
             participants: participants.map { $0.name },
             winner: result.winner.name,
             createdBy: UUID(uuidString: UserManager.shared.userId) ?? UUID(),
@@ -86,7 +98,7 @@ class ParticipationViewModel: ObservableObject {
         let completed = CompletedMission(
             id: UUID(),
             missionName: mission.name,
-            totalAmount: NSDecimalNumber(decimal: mission.totalAmount).doubleValue,
+            totalAmount: 0,
             participants: participants.map { $0.name },
             winner: loserName,
             createdBy: UUID(uuidString: UserManager.shared.userId) ?? UUID(),
