@@ -135,6 +135,8 @@ struct ParticipationView: View {
                 let loser = viewModel.participants[idx]
                 viewModel.drawResult = (loser, 0)
                 viewModel.setLoserAndSaveHistory(loserName: loser.name)
+                // Retirer la mission des missions en attente
+                MissionService.shared.removeMission(viewModel.mission)
             }
         }) {
             SlotMachineView(participants: viewModel.participants.map { $0.name }, amount: 0) { loserIdx in

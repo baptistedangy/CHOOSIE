@@ -2,6 +2,9 @@ import SwiftUI
 
 struct HomeView: View {
     @Binding var path: NavigationPath
+    @ObservedObject private var historyManager = MissionHistoryManager.shared
+    @ObservedObject private var userManager = UserManager.shared
+    @State private var showHistorique = false
 
     var body: some View {
         ZStack {
@@ -12,45 +15,73 @@ struct HomeView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 36) {
-                Spacer()
-                MascotView(mood: "👋")
-                Text("Bienvenue sur Choosie !")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .shadow(radius: 4)
-                    .padding(.bottom, 8)
-                Text("Joue, partage, et tire au sort des missions fun entre amis !")
-                    .font(.system(size: 18, weight: .regular, design: .rounded))
-                    .foregroundColor(.white.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 32)
+            ScrollView {
+                VStack(spacing: 36) {
+                    HStack {
+                        Spacer()
+                        Button(action: { showHistorique = true }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .font(.title2)
+                                    .foregroundColor(.choosieLila)
+                                Text("Voir l'historique")
+                                    .font(.headline)
+                                    .foregroundColor(.choosieLila)
+                            }
+                            .padding(10)
+                            .background(Color.choosieCard)
+                            .cornerRadius(14)
+                            .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
+                        }
+                    }
+                    .padding(.top, 12)
+                    Spacer(minLength: 12)
+                    MascotView(mood: "👋")
+                    Text("Bienvenue sur Choosie !")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .shadow(radius: 4)
+                        .padding(.bottom, 8)
+                    Text("Joue, partage, et tire au sort des missions fun entre amis !")
+                        .font(.system(size: 18, weight: .regular, design: .rounded))
+                        .foregroundColor(.white.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 32)
 
-                VStack(spacing: 24) {
-                    CardButton(
-                        icon: "🎲",
-                        title: "Créer une mission",
-                        subtitle: "Lance un nouveau défi !",
-                        color: .choosieLila
-                    ) {
-                        path.append("create")
+                    VStack(spacing: 24) {
+                        CardButton(
+                            icon: "🎲",
+                            title: "Créer une mission",
+                            subtitle: "Lance un nouveau défi !",
+                            color: .choosieLila
+                        ) {
+                            path.append("create")
+                        }
+                        CardButton(
+                            icon: "🤝",
+                            title: "Rejoindre une mission",
+                            subtitle: "Entre un code et participe !",
+                            color: .choosieTurquoise
+                        ) {
+                            path.append("join")
+                        }
                     }
-                    CardButton(
-                        icon: "🤝",
-                        title: "Rejoindre une mission",
-                        subtitle: "Entre un code et participe !",
-                        color: .choosieTurquoise
-                    ) {
-                        path.append("join")
-                    }
-                }
-                .padding(.horizontal, 24)
-                MesMissionsEnAttenteSection(path: $path)
                     .padding(.horizontal, 24)
-                    .padding(.top, 8)
-                Spacer()
+                    MesMissionsEnAttenteSection(path: $path)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                    Divider().padding(.vertical, 16)
+                    Spacer(minLength: 24)
+                }
+            }
+            .sheet(isPresented: $showHistorique) {
+                HistoriqueMissionsPage(showHistorique: $showHistorique, path: $path)
             }
         }
+        .navigationDestination(for: ParticipationNavigationKey.self) { navKey in
+            ParticipationView(mission: navKey.mission, path: $path)
+        }
+        // TODO: .navigationDestination pour la page de détails d'une mission terminée
     }
 }
 
@@ -70,6 +101,7 @@ struct MascotView: View {
 struct MesMissionsEnAttenteSection: View {
     @ObservedObject private var missionService = MissionService.shared
     @Binding var path: NavigationPath
+    @State private var showSheet = false
     let currentUserId = "MOCK_USER_ID"
 
     var missionsEnAttente: [MissionModel] {
@@ -79,19 +111,66 @@ struct MesMissionsEnAttenteSection: View {
     }
 
     var body: some View {
-        if !missionsEnAttente.isEmpty {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Mes missions en attente")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .padding(.top, 16)
-                ForEach(missionsEnAttente) { mission in
-                    MissionAttenteCard(mission: mission) {
-                        path.append("participation_\(mission.code)")
+        VStack(alignment: .leading, spacing: 12) {
+            Button(action: { showSheet = true }) {
+                HStack {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.title2)
+                        .foregroundColor(.choosieTurquoise)
+                    Text("Voir mes missions en attente")
+                        .font(.headline)
+                        .foregroundColor(.choosieTurquoise)
+                    Spacer()
+                    if !missionsEnAttente.isEmpty {
+                        Text("\(missionsEnAttente.count)")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .padding(6)
+                            .background(Color.choosieTurquoise)
+                            .clipShape(Circle())
+                    }
+                }
+                .padding()
+                .background(Color.choosieCard)
+                .cornerRadius(16)
+                .shadow(color: Color.choosieTurquoise.opacity(0.08), radius: 4, x: 0, y: 2)
+            }
+            .sheet(isPresented: $showSheet) {
+                NavigationView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Mes missions en attente")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.top, 16)
+                            .padding(.bottom, 8)
+                        if missionsEnAttente.isEmpty {
+                            Spacer()
+                            Text("Aucune mission en attente.")
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                            Spacer()
+                        } else {
+                            List {
+                                ForEach(missionsEnAttente) { mission in
+                                    MissionAttenteCard(mission: mission) {
+                                        showSheet = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            path.append(ParticipationNavigationKey(mission: mission))
+                                        }
+                                    }
+                                }
+                            }
+                            .listStyle(PlainListStyle())
+                        }
+                    }
+                    .padding(.horizontal)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fermer") { showSheet = false }
+                        }
                     }
                 }
             }
-            .padding(.top, 24)
         }
     }
 }
@@ -99,6 +178,8 @@ struct MesMissionsEnAttenteSection: View {
 struct MissionAttenteCard: View {
     let mission: MissionModel
     let onTap: () -> Void
+    // TODO: Ajouter le vrai nombre de participants si disponible
+    var participantCount: Int? = nil
     var body: some View {
         HStack(spacing: 16) {
             Text("🎯")
@@ -109,7 +190,7 @@ struct MissionAttenteCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(mission.name)
                     .font(.headline)
-                Text("Participants : ? / ? payé(s)")
+                Text("Participants : \(participantCount.map { String($0) } ?? "?")")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -127,6 +208,151 @@ struct MissionAttenteCard: View {
         .background(Color.choosieCard)
         .cornerRadius(18)
         .shadow(color: Color.choosieLila.opacity(0.08), radius: 6, x: 0, y: 2)
+    }
+}
+
+struct HistoriqueMissionsSection: View {
+    @ObservedObject private var historyManager = MissionHistoryManager.shared
+    @ObservedObject private var userManager = UserManager.shared
+    @Binding var path: NavigationPath
+
+    var missions: [CompletedMission] {
+        historyManager.missions
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Historique des missions")
+                .font(.title3)
+                .fontWeight(.bold)
+                .padding(.bottom, 8)
+            if missions.isEmpty {
+                Text("Aucune mission terminée.")
+                    .foregroundColor(.gray)
+            } else {
+                ForEach(missions) { mission in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(mission.missionName)
+                                .font(.headline)
+                            Text("Gagnant : \(mission.winner == userManager.displayName ? "Moi" : mission.winner)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("Montant : \(mission.totalAmount, specifier: "%.2f") €")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text(mission.date, style: .date)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                        Button(action: {
+                            // TODO: Navigation vers la page de détails de la mission
+                        }) {
+                            Text("Détails")
+                                .font(.subheadline)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.choosieLila.opacity(0.15))
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(8)
+                    .background(Color.choosieCard.opacity(0.7))
+                    .cornerRadius(14)
+                }
+            }
+        }
+    }
+}
+
+// Nouvelle clé de navigation pour ParticipationView
+struct ParticipationNavigationKey: Hashable {
+    let mission: MissionModel
+}
+
+struct HistoriqueMissionsPage: View {
+    @ObservedObject private var historyManager = MissionHistoryManager.shared
+    @ObservedObject private var userManager = UserManager.shared
+    @Binding var showHistorique: Bool
+    @Binding var path: NavigationPath
+
+    var missions: [CompletedMission] {
+        historyManager.missions
+    }
+
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Button(action: { showHistorique = false }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Revenir à l'accueil")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.choosieLila)
+                        .padding(8)
+                        .background(Color.choosieCard)
+                        .cornerRadius(10)
+                    }
+                    Spacer()
+                }
+                .padding([.top, .horizontal], 16)
+                Text("Historique des missions")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                if missions.isEmpty {
+                    Spacer()
+                    Text("Aucune mission terminée.")
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    Spacer()
+                } else {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            ForEach(missions) { mission in
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(mission.missionName)
+                                            .font(.headline)
+                                        Text("Gagnant : \(mission.winner == userManager.displayName ? "Moi" : mission.winner)")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        Text("Montant : \(mission.totalAmount, specifier: "%.2f") €")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        Text(mission.date, style: .date)
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                    }
+                                    Spacer()
+                                    Button(action: {
+                                        // TODO: Navigation vers la page de détails de la mission
+                                    }) {
+                                        Text("Détails")
+                                            .font(.subheadline)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 6)
+                                            .background(Color.choosieLila.opacity(0.15))
+                                            .cornerRadius(10)
+                                    }
+                                }
+                                .padding(8)
+                                .background(Color.choosieCard.opacity(0.7))
+                                .cornerRadius(14)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                }
+                Spacer(minLength: 12)
+            }
+            .background(Color.choosieBackground.ignoresSafeArea())
+        }
     }
 }
 
