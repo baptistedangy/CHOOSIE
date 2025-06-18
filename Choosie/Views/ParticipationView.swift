@@ -8,6 +8,10 @@ struct ParticipationView: View {
     @State private var slotLoserIndex: Int? = nil
     @State private var contributionText: String = "1"
     @State private var showContributionError: Bool = false
+    @State private var tirageEffectue = false
+    @State private var timer: Timer? = nil
+    @State private var shouldNavigateToResult = false
+    @State private var tiragePret = false
 
     init(mission: MissionModel, path: Binding<NavigationPath>) {
         _viewModel = StateObject(wrappedValue: ParticipationViewModel(mission: mission))
@@ -16,8 +20,9 @@ struct ParticipationView: View {
 
     var body: some View {
         VStack {
-            if let result = viewModel.drawResult {
-                // Écran final simplifié après tirage
+            if shouldNavigateToResult, let result = viewModel.drawResult {
+                DrawResultView(viewModel: DrawResultViewModel(winnerName: result.winner.name, amountWon: result.amount), path: $path)
+            } else if let result = viewModel.drawResult {
                 VStack {
                     Spacer()
                     Text("🎉 Félicitations, \(result.winner.name) a été tiré au sort pour réaliser la mission !")
@@ -114,7 +119,31 @@ struct ParticipationView: View {
                     Text("Cagnotte totale actuelle : \(amountFormatter(viewModel.totalPot)) €")
                         .font(.headline)
                         .padding(.top, 8)
-                    if viewModel.allPaid && viewModel.drawResult == nil {
+                    // Affichage conditionnel selon la planification
+                    if let drawDate = viewModel.mission.drawDate {
+                        if drawDate > Date() {
+                            VStack(spacing: 12) {
+                                Text("Mission programmée avec succès !")
+                                    .font(.headline)
+                                    .foregroundColor(.blue)
+                                CountdownView(targetDate: drawDate)
+                            }
+                        } else if viewModel.allPaid && viewModel.drawResult == nil {
+                            if !tiragePret {
+                                Button(action: {
+                                    tiragePret = true
+                                    showSlotMachine = true
+                                }) {
+                                    Text("Aller au tirage")
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.purple)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
+                                }
+                            }
+                        }
+                    } else if viewModel.allPaid && viewModel.drawResult == nil {
                         Button(action: {
                             showSlotMachine = true
                         }) {
@@ -130,12 +159,35 @@ struct ParticipationView: View {
                 .padding()
             }
         }
+        .onAppear {
+            // Timer pour surveiller la date de tirage (pour la logique de tirage automatique uniquement)
+            if viewModel.mission.drawDate != nil {
+                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    if let drawDate = viewModel.mission.drawDate, drawDate <= Date(), viewModel.allPaid, viewModel.drawResult == nil {
+                        tiragePret = false // Afficher le bouton "Aller au tirage"
+                    }
+                    if !tirageEffectue,
+                        let drawDate = viewModel.mission.drawDate,
+                        drawDate <= Date(),
+                        viewModel.allPaid,
+                        viewModel.drawResult != nil {
+                        tirageEffectue = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                            shouldNavigateToResult = true
+                        }
+                        timer?.invalidate()
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            timer?.invalidate()
+        }
         .sheet(isPresented: $showSlotMachine, onDismiss: {
             if let idx = slotLoserIndex {
                 let loser = viewModel.participants[idx]
                 viewModel.drawResult = (loser, 0)
                 viewModel.setLoserAndSaveHistory(loserName: loser.name)
-                // Retirer la mission des missions en attente
                 MissionService.shared.removeMission(viewModel.mission)
             }
         }) {

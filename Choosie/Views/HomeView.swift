@@ -143,7 +143,7 @@ struct MesMissionsEnAttenteSection: View {
                                     MissionAttenteCard(mission: mission) {
                                         showSheet = false
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                            path.append(ParticipationNavigationKey(mission: mission))
+                                            path.append(mission)
                                         }
                                     }
                                 }
@@ -392,44 +392,48 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                HStack {
-                    Button(action: { showProfile = false }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "chevron.left")
-                            Text("Retour à l'accueil")
+            ScrollView {
+                VStack(spacing: 24) {
+                    HStack {
+                        Button(action: { showProfile = false }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "chevron.left")
+                                Text("Retour à l'accueil")
+                            }
+                            .font(.headline)
+                            .foregroundColor(.choosieLila)
+                            .padding(8)
+                            .background(Color.choosieCard)
+                            .cornerRadius(10)
                         }
-                        .font(.headline)
-                        .foregroundColor(.choosieLila)
-                        .padding(8)
-                        .background(Color.choosieCard)
-                        .cornerRadius(10)
+                        Spacer()
                     }
-                    Spacer()
+                    .padding(.top, 16)
+                    VStack(spacing: 8) {
+                        Text(userManager.emoji)
+                            .font(.system(size: 60))
+                            .padding(8)
+                        Text(userManager.displayName)
+                            .font(.title)
+                            .fontWeight(.bold)
+                    }
+                    .padding(.bottom, 16)
+                    // Section missions en attente
+                    SectionHeader(title: "Mes missions en attente", isExpanded: $showPending)
+                    if showPending {
+                        PendingMissionsListSection(path: $path)
+                            .padding(.horizontal, 8)
+                    }
+                    // Section historique
+                    SectionHeader(title: "Historique des missions", isExpanded: $showHistory)
+                    if showHistory {
+                        HistoryMissionsListSection(path: $path)
+                            .padding(.horizontal, 8)
+                    }
+                    Spacer(minLength: 16)
                 }
-                .padding(.top, 16)
-                VStack(spacing: 8) {
-                    Text(userManager.emoji)
-                        .font(.system(size: 60))
-                        .padding(8)
-                    Text(userManager.displayName)
-                        .font(.title)
-                        .fontWeight(.bold)
-                }
-                .padding(.bottom, 16)
-                // Section missions en attente
-                SectionHeader(title: "Mes missions en attente", isExpanded: $showPending)
-                if showPending {
-                    MesMissionsEnAttenteSection(path: $path)
-                        .padding(.horizontal, 8)
-                }
-                // Section historique
-                SectionHeader(title: "Historique des missions", isExpanded: $showHistory)
-                if showHistory {
-                    HistoriqueMissionsPage(showHistorique: .constant(false), path: $path)
-                        .padding(.horizontal, 8)
-                }
-                Spacer()
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
             }
         }
     }
@@ -453,6 +457,175 @@ struct SectionHeader: View {
             .cornerRadius(10)
         }
         .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct PendingMissionsListSection: View {
+    @ObservedObject private var missionService = MissionService.shared
+    @Binding var path: NavigationPath
+    var missionsEnAttente: [MissionModel] {
+        missionService.missions.filter { $0.drawDate != nil && ($0.drawDate! > Date()) }
+    }
+    var body: some View {
+        if missionsEnAttente.isEmpty {
+            Text("Aucune mission planifiée.")
+                .foregroundColor(.gray)
+                .padding(.vertical, 8)
+        } else {
+            VStack(spacing: 24) {
+                ForEach(missionsEnAttente) { mission in
+                    VStack(spacing: 12) {
+                        Text(mission.name)
+                            .font(.headline)
+                            .padding(.top, 8)
+                        if let date = mission.drawDate {
+                            CountdownView(targetDate: date)
+                                .padding(.vertical, 4)
+                        }
+                        Button(action: {
+                            path.append(mission)
+                        }) {
+                            Text("Revenir à la mission")
+                                .font(.subheadline)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(Color.choosieTurquoise.opacity(0.18))
+                                .cornerRadius(12)
+                        }
+                    }
+                    .padding()
+                    .background(Color.choosieCard)
+                    .cornerRadius(18)
+                    .shadow(color: Color.choosieLila.opacity(0.08), radius: 6, x: 0, y: 2)
+                }
+            }
+        }
+    }
+}
+
+struct HistoryMissionsListSection: View {
+    @ObservedObject private var historyManager = MissionHistoryManager.shared
+    @ObservedObject private var userManager = UserManager.shared
+    @Binding var path: NavigationPath
+    var missions: [CompletedMission] {
+        historyManager.missions
+    }
+    var body: some View {
+        if missions.isEmpty {
+            Text("Aucune mission terminée.")
+                .foregroundColor(.gray)
+                .padding(.vertical, 8)
+        } else {
+            VStack(spacing: 12) {
+                ForEach(missions) { mission in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(mission.missionName)
+                                .font(.headline)
+                            Text("Gagnant : \(mission.winner == userManager.displayName ? "Moi" : mission.winner)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text("Montant : \(mission.totalAmount, specifier: "%.2f") €")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            Text(mission.date, style: .date)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                        Button(action: {
+                            // TODO: Navigation vers la page de détails de la mission
+                        }) {
+                            Text("Détails")
+                                .font(.subheadline)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.choosieLila.opacity(0.15))
+                                .cornerRadius(10)
+                        }
+                        Button(action: {
+                            historyManager.removeMission(mission)
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .padding(8)
+                                .background(Color.red.opacity(0.08))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding(8)
+                    .background(Color.choosieCard.opacity(0.7))
+                    .cornerRadius(14)
+                }
+            }
+        }
+    }
+}
+
+struct CountdownView: View {
+    let targetDate: Date
+    @State private var now: Date = Date()
+    @State private var animate = false
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    var timeLeft: TimeInterval {
+        max(targetDate.timeIntervalSince(now), 0)
+    }
+    var hms: (Int, Int, Int) {
+        let t = Int(timeLeft)
+        return (t / 3600, (t % 3600) / 60, t % 60)
+    }
+    var color: Color {
+        if timeLeft <= 60 { return .red }
+        if timeLeft <= 600 { return .orange }
+        return .blue
+    }
+    var body: some View {
+        let (h, m, s) = hms
+        return VStack(spacing: 8) {
+            Text("Tirage dans...")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .opacity(0.8)
+            HStack(spacing: 8) {
+                timeBlock(String(format: "%02d", h))
+                Text(":")
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundColor(color)
+                    .opacity(0.7)
+                timeBlock(String(format: "%02d", m))
+                Text(":")
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundColor(color)
+                    .opacity(0.7)
+                timeBlock(String(format: "%02d", s))
+            }
+        }
+        .padding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(Color.white.opacity(0.7))
+                .shadow(radius: 8)
+        )
+        .scaleEffect(animate ? 1.08 : 1.0)
+        .animation(.interpolatingSpring(stiffness: 200, damping: 8), value: animate)
+        .onReceive(timer) { _ in
+            now = Date()
+            animate = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { animate = false }
+        }
+    }
+    func timeBlock(_ str: String) -> some View {
+        Text(str)
+            .font(.system(size: 54, weight: .bold, design: .rounded))
+            .foregroundColor(color)
+            .frame(width: 70)
+            .padding(.vertical, 8)
+            .background(RoundedRectangle(cornerRadius: 16).fill(color.opacity(0.12)))
+            .shadow(color: color.opacity(0.12), radius: 4, x: 0, y: 2)
+            .scaleEffect(animate ? 1.08 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.5), value: animate)
     }
 }
 

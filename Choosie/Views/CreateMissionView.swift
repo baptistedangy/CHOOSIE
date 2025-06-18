@@ -10,6 +10,8 @@ struct CreateMissionView: View {
     @State private var selectedParticipantIndex: Int = -1
     @State private var showCustomParticipantField: Bool = false
     @State private var customParticipantText: String = ""
+    @State private var tirageOption: String = "now"
+    @State private var scheduledDate: Date = Calendar.current.date(byAdding: .minute, value: 10, to: Date()) ?? Date()
     private var amountOptions: [Int] { Array(1...1000) + [-1] }
 
     struct MissionSuggestion: Identifiable, Hashable {
@@ -80,8 +82,42 @@ struct CreateMissionView: View {
                     .cornerRadius(20)
                     .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
                 }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Quand doit avoir lieu le tirage ?")
+                        .font(.headline)
+                    HStack(spacing: 24) {
+                        Button(action: { tirageOption = "now" }) {
+                            HStack {
+                                Image(systemName: tirageOption == "now" ? "largecircle.fill.circle" : "circle")
+                                    .foregroundColor(.choosieLila)
+                                Text("Maintenant")
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        Button(action: { tirageOption = "later" }) {
+                            HStack {
+                                Image(systemName: tirageOption == "later" ? "largecircle.fill.circle" : "circle")
+                                    .foregroundColor(.choosieLila)
+                                Text("Plus tard")
+                            }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    if tirageOption == "later" {
+                        DatePicker("Date et heure du tirage", selection: $scheduledDate, in: Date()..., displayedComponents: [.date, .hourAndMinute])
+                            .datePickerStyle(.compact)
+                            .labelsHidden()
+                            .padding(.leading, 8)
+                    }
+                }
+                .padding()
+                .background(Color.choosieCard)
+                .cornerRadius(16)
+                .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
+
                 Button(action: {
-                    if viewModel.createMission() {
+                    if viewModel.createMission(drawDate: tirageOption == "later" ? scheduledDate : nil) {
                         navigateToShare = true
                     }
                 }) {

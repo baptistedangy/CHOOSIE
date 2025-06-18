@@ -16,6 +16,9 @@ struct ContentView: View {
                         EmptyView()
                     }
                 }
+                .navigationDestination(for: MissionModel.self) { mission in
+                    ParticipationView(mission: mission, path: $path)
+                }
         }
     }
 }

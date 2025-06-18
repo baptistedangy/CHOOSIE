@@ -9,7 +9,7 @@ class CreateMissionViewModel: ObservableObject {
         !missionName.isEmpty
     }
 
-    func createMission() -> Bool {
+    func createMission(drawDate: Date? = nil) -> Bool {
         guard canCreate else { return false }
         let code = Self.generateUniqueCode()
         self.generatedCode = code
@@ -19,7 +19,8 @@ class CreateMissionViewModel: ObservableObject {
             code: code,
             inviteCode: UUID().uuidString.prefix(6).uppercased(),
             loserName: nil,
-            isPending: false
+            isPending: false,
+            drawDate: drawDate
         )
         MissionService.shared.addMission(mission)
         self.lastCreatedMission = mission
