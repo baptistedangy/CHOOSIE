@@ -2,7 +2,9 @@ import SwiftUI
 
 struct HomeView: View {
     @Binding var path: NavigationPath
-    @State private var showHistorique = false
+    @ObservedObject private var userManager = UserManager.shared
+    @State private var showProfile = false
+    @State private var showProfileSetup = false
 
     var body: some View {
         ZStack {
@@ -16,19 +18,11 @@ struct HomeView: View {
             VStack(spacing: 36) {
                 HStack {
                     Spacer()
-                    Button(action: { showHistorique = true }) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "clock.arrow.circlepath")
-                                .font(.title2)
-                                .foregroundColor(.choosieLila)
-                            Text("Voir l'historique")
-                                .font(.headline)
-                                .foregroundColor(.choosieLila)
-                        }
-                        .padding(10)
-                        .background(Color.choosieCard)
-                        .cornerRadius(14)
-                        .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
+                    Button(action: { showProfile = true }) {
+                        Image(systemName: "person.circle")
+                            .font(.system(size: 32))
+                            .foregroundColor(.choosieLila)
+                            .padding(8)
                     }
                 }
                 .padding(.top, 12)
@@ -62,16 +56,18 @@ struct HomeView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-                MesMissionsEnAttenteSection(path: $path)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 8)
             }
-            .sheet(isPresented: $showHistorique) {
-                HistoriqueMissionsPage(showHistorique: $showHistorique, path: $path)
+            .sheet(isPresented: $showProfile) {
+                ProfileView(showProfile: $showProfile, path: $path)
+            }
+            .sheet(isPresented: $showProfileSetup) {
+                ProfileSetupView(showProfileSetup: $showProfileSetup)
             }
         }
-        .navigationDestination(for: ParticipationNavigationKey.self) { navKey in
-            ParticipationView(mission: navKey.mission, path: $path)
+        .onAppear {
+            if !userManager.hasProfile {
+                showProfileSetup = true
+            }
         }
     }
 }
@@ -320,6 +316,144 @@ struct HistoriqueMissionsPage: View {
 // Clé de navigation pour ParticipationView
 struct ParticipationNavigationKey: Hashable {
     let mission: MissionModel
+}
+
+// Vue de création du profil utilisateur
+struct ProfileSetupView: View {
+    @ObservedObject private var userManager = UserManager.shared
+    @Binding var showProfileSetup: Bool
+    @State private var pseudo: String = ""
+    @State private var emoji: String = "😀"
+    @State private var showError = false
+    let emojis = ["😀", "😎", "🥳", "🤩", "🦄", "🐱", "🐶", "🦊", "🐼", "🐸", "🐵", "🦁", "🐯", "🐰", "🐻", "🐨", "🐷", "🐮", "🐔", "🐧", "🐦", "🐤", "🐙", "🦋", "🐢", "🐬", "🦖", "🦕", "🦩", "🦚", "🦜", "🦢", "🦩", "🦔", "🦦", "🦥", "🦨", "🦘", "🦡", "🦃", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🐛", "🦋", "🐌", "🐞", "🐜", "🦗", "🕷", "🦂", "🦟", "🦠"]
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 32) {
+                Text("Créer mon profil")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top, 24)
+                VStack(spacing: 20) {
+                    TextField("Choisis un pseudo", text: $pseudo)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal, 32)
+                    Text("Choisis ton emoji")
+                        .font(.headline)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(emojis, id: \.self) { e in
+                                Text(e)
+                                    .font(.system(size: 36))
+                                    .padding(8)
+                                    .background(emoji == e ? Color.choosieLila.opacity(0.2) : Color.clear)
+                                    .clipShape(Circle())
+                                    .onTapGesture { emoji = e }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+                }
+                if showError {
+                    Text("Merci de renseigner un pseudo et un emoji.")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
+                Button(action: {
+                    if pseudo.trimmingCharacters(in: .whitespaces).isEmpty || emoji.isEmpty {
+                        showError = true
+                    } else {
+                        userManager.saveProfile(pseudo: pseudo, emoji: emoji)
+                        showProfileSetup = false
+                    }
+                }) {
+                    Text("Valider")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.choosieLila)
+                        .foregroundColor(.white)
+                        .cornerRadius(14)
+                        .padding(.horizontal, 32)
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+// Vue Profil utilisateur
+struct ProfileView: View {
+    @ObservedObject private var userManager = UserManager.shared
+    @Binding var showProfile: Bool
+    @Binding var path: NavigationPath
+    @State private var showPending = true
+    @State private var showHistory = true
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 24) {
+                HStack {
+                    Button(action: { showProfile = false }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Retour à l'accueil")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.choosieLila)
+                        .padding(8)
+                        .background(Color.choosieCard)
+                        .cornerRadius(10)
+                    }
+                    Spacer()
+                }
+                .padding(.top, 16)
+                VStack(spacing: 8) {
+                    Text(userManager.emoji)
+                        .font(.system(size: 60))
+                        .padding(8)
+                    Text(userManager.displayName)
+                        .font(.title)
+                        .fontWeight(.bold)
+                }
+                .padding(.bottom, 16)
+                // Section missions en attente
+                SectionHeader(title: "Mes missions en attente", isExpanded: $showPending)
+                if showPending {
+                    MesMissionsEnAttenteSection(path: $path)
+                        .padding(.horizontal, 8)
+                }
+                // Section historique
+                SectionHeader(title: "Historique des missions", isExpanded: $showHistory)
+                if showHistory {
+                    HistoriqueMissionsPage(showHistorique: .constant(false), path: $path)
+                        .padding(.horizontal, 8)
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+struct SectionHeader: View {
+    let title: String
+    @Binding var isExpanded: Bool
+    var body: some View {
+        Button(action: { isExpanded.toggle() }) {
+            HStack {
+                Text(title)
+                    .font(.title3)
+                    .fontWeight(.bold)
+                Spacer()
+                Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
+            .background(Color.choosieCard.opacity(0.15))
+            .cornerRadius(10)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
 }
 
 #Preview {
