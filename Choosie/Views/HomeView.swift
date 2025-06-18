@@ -2,8 +2,6 @@ import SwiftUI
 
 struct HomeView: View {
     @Binding var path: NavigationPath
-    @ObservedObject private var historyManager = MissionHistoryManager.shared
-    @ObservedObject private var userManager = UserManager.shared
     @State private var showHistorique = false
 
     var body: some View {
@@ -15,64 +13,58 @@ struct HomeView: View {
             )
             .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 36) {
-                    HStack {
-                        Spacer()
-                        Button(action: { showHistorique = true }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "clock.arrow.circlepath")
-                                    .font(.title2)
-                                    .foregroundColor(.choosieLila)
-                                Text("Voir l'historique")
-                                    .font(.headline)
-                                    .foregroundColor(.choosieLila)
-                            }
-                            .padding(10)
-                            .background(Color.choosieCard)
-                            .cornerRadius(14)
-                            .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
+            VStack(spacing: 36) {
+                HStack {
+                    Spacer()
+                    Button(action: { showHistorique = true }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "clock.arrow.circlepath")
+                                .font(.title2)
+                                .foregroundColor(.choosieLila)
+                            Text("Voir l'historique")
+                                .font(.headline)
+                                .foregroundColor(.choosieLila)
                         }
+                        .padding(10)
+                        .background(Color.choosieCard)
+                        .cornerRadius(14)
+                        .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
                     }
-                    .padding(.top, 12)
-                    Spacer(minLength: 12)
-                    MascotView(mood: "👋")
-                    Text("Bienvenue sur Choosie !")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .shadow(radius: 4)
-                        .padding(.bottom, 8)
-                    Text("Joue, partage, et tire au sort des missions fun entre amis !")
-                        .font(.system(size: 18, weight: .regular, design: .rounded))
-                        .foregroundColor(.white.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 32)
-
-                    VStack(spacing: 24) {
-                        CardButton(
-                            icon: "🎲",
-                            title: "Créer une mission",
-                            subtitle: "Lance un nouveau défi !",
-                            color: .choosieLila
-                        ) {
-                            path.append("create")
-                        }
-                        CardButton(
-                            icon: "🤝",
-                            title: "Rejoindre une mission",
-                            subtitle: "Entre un code et participe !",
-                            color: .choosieTurquoise
-                        ) {
-                            path.append("join")
-                        }
-                    }
-                    .padding(.horizontal, 24)
-                    MesMissionsEnAttenteSection(path: $path)
-                        .padding(.horizontal, 24)
-                        .padding(.top, 8)
-                    Divider().padding(.vertical, 16)
-                    Spacer(minLength: 24)
                 }
+                .padding(.top, 12)
+                MascotView(mood: "👋")
+                Text("Bienvenue sur Choosie !")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .shadow(radius: 4)
+                    .padding(.bottom, 8)
+                Text("Joue, partage, et tire au sort des missions fun entre amis !")
+                    .font(.system(size: 18, weight: .regular, design: .rounded))
+                    .foregroundColor(.white.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 32)
+                VStack(spacing: 24) {
+                    CardButton(
+                        icon: "🎲",
+                        title: "Créer une mission",
+                        subtitle: "Lance un nouveau défi !",
+                        color: .choosieLila
+                    ) {
+                        path.append("create")
+                    }
+                    CardButton(
+                        icon: "🤝",
+                        title: "Rejoindre une mission",
+                        subtitle: "Entre un code et participe !",
+                        color: .choosieTurquoise
+                    ) {
+                        path.append("join")
+                    }
+                }
+                .padding(.horizontal, 24)
+                MesMissionsEnAttenteSection(path: $path)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
             }
             .sheet(isPresented: $showHistorique) {
                 HistoriqueMissionsPage(showHistorique: $showHistorique, path: $path)
@@ -81,7 +73,6 @@ struct HomeView: View {
         .navigationDestination(for: ParticipationNavigationKey.self) { navKey in
             ParticipationView(mission: navKey.mission, path: $path)
         }
-        // TODO: .navigationDestination pour la page de détails d'une mission terminée
     }
 }
 
@@ -98,6 +89,7 @@ struct MascotView: View {
     }
 }
 
+// Section Mes missions en attente
 struct MesMissionsEnAttenteSection: View {
     @ObservedObject private var missionService = MissionService.shared
     @Binding var path: NavigationPath
@@ -211,71 +203,14 @@ struct MissionAttenteCard: View {
     }
 }
 
-struct HistoriqueMissionsSection: View {
-    @ObservedObject private var historyManager = MissionHistoryManager.shared
-    @ObservedObject private var userManager = UserManager.shared
-    @Binding var path: NavigationPath
-
-    var missions: [CompletedMission] {
-        historyManager.missions
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Historique des missions")
-                .font(.title3)
-                .fontWeight(.bold)
-                .padding(.bottom, 8)
-            if missions.isEmpty {
-                Text("Aucune mission terminée.")
-                    .foregroundColor(.gray)
-            } else {
-                ForEach(missions) { mission in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(mission.missionName)
-                                .font(.headline)
-                            Text("Gagnant : \(mission.winner == userManager.displayName ? "Moi" : mission.winner)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Text("Montant : \(mission.totalAmount, specifier: "%.2f") €")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                            Text(mission.date, style: .date)
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        Spacer()
-                        Button(action: {
-                            // TODO: Navigation vers la page de détails de la mission
-                        }) {
-                            Text("Détails")
-                                .font(.subheadline)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(Color.choosieLila.opacity(0.15))
-                                .cornerRadius(10)
-                        }
-                    }
-                    .padding(8)
-                    .background(Color.choosieCard.opacity(0.7))
-                    .cornerRadius(14)
-                }
-            }
-        }
-    }
-}
-
-// Nouvelle clé de navigation pour ParticipationView
-struct ParticipationNavigationKey: Hashable {
-    let mission: MissionModel
-}
-
+// Page Historique des missions (version simple)
 struct HistoriqueMissionsPage: View {
     @ObservedObject private var historyManager = MissionHistoryManager.shared
     @ObservedObject private var userManager = UserManager.shared
     @Binding var showHistorique: Bool
     @Binding var path: NavigationPath
+    @State private var missionToDelete: CompletedMission? = nil
+    @State private var showDeleteAlert = false
 
     var missions: [CompletedMission] {
         historyManager.missions
@@ -339,6 +274,17 @@ struct HistoriqueMissionsPage: View {
                                             .background(Color.choosieLila.opacity(0.15))
                                             .cornerRadius(10)
                                     }
+                                    Button(action: {
+                                        missionToDelete = mission
+                                        showDeleteAlert = true
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                            .padding(8)
+                                            .background(Color.red.opacity(0.08))
+                                            .clipShape(Circle())
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
                                 .padding(8)
                                 .background(Color.choosieCard.opacity(0.7))
@@ -352,8 +298,28 @@ struct HistoriqueMissionsPage: View {
                 Spacer(minLength: 12)
             }
             .background(Color.choosieBackground.ignoresSafeArea())
+            .alert(isPresented: $showDeleteAlert) {
+                Alert(
+                    title: Text("Supprimer la mission ?"),
+                    message: Text("Confirmer la suppression de cette mission de l'historique ?"),
+                    primaryButton: .destructive(Text("Supprimer")) {
+                        if let mission = missionToDelete {
+                            historyManager.removeMission(mission)
+                        }
+                        missionToDelete = nil
+                    },
+                    secondaryButton: .cancel(Text("Annuler")) {
+                        missionToDelete = nil
+                    }
+                )
+            }
         }
     }
+}
+
+// Clé de navigation pour ParticipationView
+struct ParticipationNavigationKey: Hashable {
+    let mission: MissionModel
 }
 
 #Preview {

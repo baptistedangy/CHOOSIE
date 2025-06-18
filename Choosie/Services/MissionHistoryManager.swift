@@ -21,6 +21,11 @@ class MissionHistoryManager: ObservableObject {
         missions
     }
     
+    func removeMission(_ mission: CompletedMission) {
+        missions.removeAll { $0.id == mission.id }
+        save()
+    }
+    
     private func save() {
         if let data = try? JSONEncoder().encode(missions) {
             UserDefaults.standard.set(data, forKey: storageKey)
