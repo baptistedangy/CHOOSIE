@@ -27,7 +27,7 @@ struct HomeView: View {
                 }
                 .padding(.top, 12)
                 MascotView(mood: "👋")
-                Text("Bienvenue sur Choosie !")
+                Text("Bienvenue sur Potpotes !")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .shadow(radius: 4)

@@ -9,7 +9,7 @@ struct UserSetupView: View {
     var body: some View {
         VStack(spacing: 32) {
             Spacer()
-            Text("Bienvenue sur Choosie !")
+            Text("Bienvenue sur Potpotes !")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             Text("Quel est votre prénom ou pseudo ?")
