@@ -49,11 +49,24 @@ struct CreateMissionView: View {
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(.choosieLila)
-                        TextField("Décris ton défi (ex : 🍕 Pizza du vendredi, 🎁 Cadeau pour Léa...)", text: $customMissionName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onChange(of: customMissionName) { newValue in
-                                viewModel.missionName = newValue
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(Color.white.opacity(0.18))
+                                .background(.ultraThinMaterial)
+                                .blur(radius: 0.5)
+                                .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
+                            HStack {
+                                Image(systemName: "person")
+                                    .foregroundColor(.white.opacity(0.5))
+                                TextField("Décris ton défi (ex : 🍕 Pizza du vendredi, 🎁 Cadeau pour Léa...)", text: $customMissionName)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .onChange(of: customMissionName) { newValue in
+                                        viewModel.missionName = newValue
+                                    }
                             }
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 14)
+                        }
                         // Suggestions
                         HStack(spacing: 10) {
                             ForEach(["🍕 Pizza party", "🍻 Première tournée", "🎁 Cadeau commun", "🍣 Déj entre collègues", "🚖 Chauffeur désigné"], id: \.self) { suggestion in
@@ -94,6 +107,9 @@ struct CreateMissionView: View {
                                 .padding(.horizontal, 8)
                                 .focused($minAmountFieldFocused)
                                 .animation(.easeOut(duration: 0.22), value: minAmountFieldFocused)
+#if os(iOS)
+                                .keyboardType(.decimalPad)
+#endif
                             Text(" €")
                                 .font(.system(size: 24, weight: .regular, design: .rounded))
                                 .foregroundColor(.secondary)

@@ -14,13 +14,26 @@ struct UserSetupView: View {
                 .fontWeight(.bold)
             Text("Quel est votre prénom ou pseudo ?")
                 .font(.title2)
-            TextField("Votre nom", text: $name)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(maxWidth: 250)
+            ZStack {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white.opacity(0.18))
+                    .background(.ultraThinMaterial)
+                    .blur(radius: 0.5)
+                    .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
+                HStack {
+                    Image(systemName: "person")
+                        .foregroundColor(.white.opacity(0.5))
+                    TextField("Votre nom", text: $name)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(maxWidth: 250)
 #if os(iOS)
-                .textInputAutocapitalization(.words)
-                .disableAutocorrection(true)
+                        .textInputAutocapitalization(.words)
+                        .disableAutocorrection(true)
 #endif
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 14)
+            }
             Button(action: {
                 let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !trimmed.isEmpty {

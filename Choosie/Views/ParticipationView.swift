@@ -78,6 +78,9 @@ struct ParticipationView: View {
                                         .frame(minWidth: 80, maxWidth: 160)
                                         .padding(.vertical, 12)
                                         .padding(.horizontal, 8)
+#if os(iOS)
+                                        .keyboardType(.decimalPad)
+#endif
                                         .background(
                                             RoundedRectangle(cornerRadius: 18)
                                                 .fill(Color.white.opacity(0.08))
@@ -117,12 +120,13 @@ struct ParticipationView: View {
                             .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
                             // Bouton payer
                             Button(action: {
-                                let amount = Decimal(string: contributionText) ?? 0
-                                if NSDecimalNumber(decimal: amount).compare(NSDecimalNumber(value: viewModel.mission.minAmount)) == .orderedAscending {
+                                let minAmount = NSDecimalNumber(decimal: Decimal(viewModel.mission.minAmount))
+                                let amount = NSDecimalNumber(string: contributionText.replacingOccurrences(of: ",", with: "."))
+                                if amount.compare(minAmount) == .orderedAscending {
                                     showContributionError = true
                                 } else {
                                     showContributionError = false
-                                    viewModel.pay(amount: amount)
+                                    viewModel.pay(amount: amount.decimalValue)
                                 }
                             }) {
                                 Text("Payer")
