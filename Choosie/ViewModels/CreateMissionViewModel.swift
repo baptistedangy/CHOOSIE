@@ -4,12 +4,17 @@ class CreateMissionViewModel: ObservableObject {
     @Published var missionName: String = ""
     @Published var generatedCode: String? = nil
     @Published var lastCreatedMission: MissionModel? = nil
+    @Published var minAmount: Double? = nil
 
     var canCreate: Bool {
         !missionName.isEmpty
     }
 
-    func createMission(drawDate: Date? = nil) -> Bool {
+    var canCreateJackpot: Bool {
+        !missionName.isEmpty && (minAmount ?? 0) >= 1
+    }
+
+    func createMission() -> Bool {
         guard canCreate else { return false }
         let code = Self.generateUniqueCode()
         self.generatedCode = code
@@ -17,10 +22,28 @@ class CreateMissionViewModel: ObservableObject {
             id: UUID(),
             name: missionName,
             code: code,
-            inviteCode: UUID().uuidString.prefix(6).uppercased(),
+            inviteCode: code,
             loserName: nil,
             isPending: false,
-            drawDate: drawDate
+            minAmount: minAmount ?? 1
+        )
+        MissionService.shared.addMission(mission)
+        self.lastCreatedMission = mission
+        return true
+    }
+
+    func createJackpot() -> Bool {
+        guard canCreateJackpot else { return false }
+        let code = Self.generateUniqueCode()
+        self.generatedCode = code
+        let mission = MissionModel(
+            id: UUID(),
+            name: missionName,
+            code: code,
+            inviteCode: code,
+            loserName: nil,
+            isPending: false,
+            minAmount: minAmount ?? 1
         )
         MissionService.shared.addMission(mission)
         self.lastCreatedMission = mission

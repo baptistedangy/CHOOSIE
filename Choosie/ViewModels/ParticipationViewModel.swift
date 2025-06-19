@@ -38,10 +38,10 @@ class ParticipationViewModel: ObservableObject {
 
     init(mission: MissionModel) {
         self.mission = mission
-        // Le premier participant est l'utilisateur courant, contribution par défaut à 1
-        self.participants = [Participant(name: "Moi", hasPaid: false, contribution: 1)]
+        // Le premier participant est l'utilisateur courant, contribution par défaut au minimum
+        self.participants = [Participant(name: "Moi", hasPaid: false, contribution: Decimal(mission.minAmount))]
 #if DEBUG
-        // Ajouter quelques participants fictifs pour le debug, contribution à 2
+        // Ajouter quelques participants fictifs pour le debug, contribution au minimum
         let needed = 2
         var usedNames = Set(["Moi"])
         for _ in 0..<needed {
@@ -50,12 +50,12 @@ class ParticipationViewModel: ObservableObject {
                 name = Self.dummyNames.randomElement() ?? "Invité"
             } while usedNames.contains(name)
             usedNames.insert(name)
-            self.participants.append(Participant(name: name, hasPaid: true, contribution: 2))
+            self.participants.append(Participant(name: name, hasPaid: true, contribution: Decimal(mission.minAmount)))
         }
 #else
         // En production, tous les participants sont non payés (exemple statique)
         for i in 2...3 {
-            self.participants.append(Participant(name: "Participant \(i)", hasPaid: false, contribution: 1))
+            self.participants.append(Participant(name: "Participant \(i)", hasPaid: false, contribution: Decimal(mission.minAmount)))
         }
 #endif
     }

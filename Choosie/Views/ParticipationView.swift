@@ -6,16 +6,18 @@ struct ParticipationView: View {
     @State private var showDrawResult = false
     @State private var showSlotMachine = false
     @State private var slotLoserIndex: Int? = nil
-    @State private var contributionText: String = "1"
+    @State private var contributionText: String
     @State private var showContributionError: Bool = false
     @State private var tirageEffectue = false
     @State private var timer: Timer? = nil
     @State private var shouldNavigateToResult = false
     @State private var tiragePret = false
+    @FocusState private var contributionFieldFocused: Bool
 
     init(mission: MissionModel, path: Binding<NavigationPath>) {
         _viewModel = StateObject(wrappedValue: ParticipationViewModel(mission: mission))
         self._path = path
+        self._contributionText = State(initialValue: String(format: "%.2f", mission.minAmount))
     }
 
     var body: some View {
@@ -60,37 +62,79 @@ struct ParticipationView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     if !viewModel.hasPaid {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Quel montant veux-tu verser pour cette mission ?")
-                                .font(.headline)
-                            HStack {
-                                TextField("Montant en €", text: $contributionText)
-                                    .frame(width: 80)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                Text(viewModel.emoji(for: Decimal(string: contributionText) ?? 0))
+                        VStack(alignment: .center, spacing: 24) {
+                            // Carte paiement
+                            VStack(alignment: .center, spacing: 14) {
+                                Text("Quel montant veux-tu verser pour ce défi ?")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.choosieLila)
+                                    .multilineTextAlignment(.center)
+                                HStack(spacing: 0) {
+                                    TextField("0.00 €", text: $contributionText)
+                                        .font(.system(size: 28, weight: .regular, design: .rounded))
+                                        .foregroundColor(Color.choosieLila.opacity(0.85))
+                                        .multilineTextAlignment(.center)
+                                        .frame(minWidth: 80, maxWidth: 160)
+                                        .padding(.vertical, 12)
+                                        .padding(.horizontal, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 18)
+                                                .fill(Color.white.opacity(0.08))
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 18)
+                                                .stroke(
+                                                    contributionFieldFocused ?
+                                                        LinearGradient(gradient: Gradient(colors: [Color.purple.opacity(0.7), Color.blue.opacity(0.7)]), startPoint: .leading, endPoint: .trailing)
+                                                            : LinearGradient(gradient: Gradient(colors: [Color.clear, Color.clear]), startPoint: .leading, endPoint: .trailing),
+                                                    lineWidth: 2.2
+                                                )
+                                                .shadow(color: contributionFieldFocused ? Color.purple.opacity(0.18) : .clear, radius: 8, x: 0, y: 2)
+                                        )
+                                        .focused($contributionFieldFocused)
+                                        .animation(.easeOut(duration: 0.22), value: contributionFieldFocused)
+                                    Text(" €")
+                                        .font(.system(size: 28, weight: .regular, design: .rounded))
+                                        .foregroundColor(.secondary)
+                                        .padding(.leading, 4)
+                                }
+                                .frame(maxWidth: 220)
+                                if showContributionError {
+                                    Text("Montant minimum pour ce Jackpot : \(String(format: "%.2f", viewModel.mission.minAmount))€")
+                                        .foregroundColor(.red)
+                                        .font(.caption)
+                                }
+                                Text("Ce montant sera mis en jeu pour le tirage au sort.")
+                                    .font(.footnote)
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.top, 2)
                             }
-                            if showContributionError {
-                                Text("Montant minimum conseillé : 1€")
-                                    .foregroundColor(.red)
-                                    .font(.caption)
+                            .padding(24)
+                            .background(Color.choosieCard)
+                            .cornerRadius(20)
+                            .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
+                            // Bouton payer
+                            Button(action: {
+                                let amount = Decimal(string: contributionText) ?? 0
+                                if NSDecimalNumber(decimal: amount).compare(NSDecimalNumber(value: viewModel.mission.minAmount)) == .orderedAscending {
+                                    showContributionError = true
+                                } else {
+                                    showContributionError = false
+                                    viewModel.pay(amount: amount)
+                                }
+                            }) {
+                                Text("Payer")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
                             }
                         }
-                        Button(action: {
-                            let amount = Decimal(string: contributionText) ?? 0
-                            if amount < 1 {
-                                showContributionError = true
-                            } else {
-                                showContributionError = false
-                                viewModel.pay(amount: amount)
-                            }
-                        }) {
-                            Text("Payer")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(12)
-                        }
+                        .frame(maxWidth: 420)
+                        .padding(.vertical, 8)
                     } else {
                         Text("Paiement effectué ✅")
                             .foregroundColor(.green)
@@ -120,30 +164,7 @@ struct ParticipationView: View {
                         .font(.headline)
                         .padding(.top, 8)
                     // Affichage conditionnel selon la planification
-                    if let drawDate = viewModel.mission.drawDate {
-                        if drawDate > Date() {
-                            VStack(spacing: 12) {
-                                Text("Mission programmée avec succès !")
-                                    .font(.headline)
-                                    .foregroundColor(.blue)
-                                CountdownView(targetDate: drawDate)
-                            }
-                        } else if viewModel.allPaid && viewModel.drawResult == nil {
-                            if !tiragePret {
-                                Button(action: {
-                                    tiragePret = true
-                                    showSlotMachine = true
-                                }) {
-                                    Text("Aller au tirage")
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.purple)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(12)
-                                }
-                            }
-                        }
-                    } else if viewModel.allPaid && viewModel.drawResult == nil {
+                    if viewModel.allPaid && viewModel.drawResult == nil {
                         Button(action: {
                             showSlotMachine = true
                         }) {
@@ -159,34 +180,11 @@ struct ParticipationView: View {
                 .padding()
             }
         }
-        .onAppear {
-            // Timer pour surveiller la date de tirage (pour la logique de tirage automatique uniquement)
-            if viewModel.mission.drawDate != nil {
-                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    if let drawDate = viewModel.mission.drawDate, drawDate <= Date(), viewModel.allPaid, viewModel.drawResult == nil {
-                        tiragePret = false // Afficher le bouton "Aller au tirage"
-                    }
-                    if !tirageEffectue,
-                        let drawDate = viewModel.mission.drawDate,
-                        drawDate <= Date(),
-                        viewModel.allPaid,
-                        viewModel.drawResult != nil {
-                        tirageEffectue = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                            shouldNavigateToResult = true
-                        }
-                        timer?.invalidate()
-                    }
-                }
-            }
-        }
-        .onDisappear {
-            timer?.invalidate()
-        }
         .sheet(isPresented: $showSlotMachine, onDismiss: {
             if let idx = slotLoserIndex {
                 let loser = viewModel.participants[idx]
-                viewModel.drawResult = (loser, 0)
+                let pot = viewModel.totalPot
+                viewModel.drawResult = (loser, pot)
                 viewModel.setLoserAndSaveHistory(loserName: loser.name)
                 MissionService.shared.removeMission(viewModel.mission)
             }
@@ -209,5 +207,5 @@ struct ParticipationView: View {
 
 #Preview {
     @State var path = NavigationPath()
-    ParticipationView(mission: MissionModel(id: UUID(), name: "Courses", code: "X4E2LQ", inviteCode: "abcd", loserName: nil, isPending: false), path: $path)
+    ParticipationView(mission: MissionModel(id: UUID(), name: "Courses", code: "X4E2LQ", inviteCode: "abcd", loserName: nil, isPending: false, minAmount: 1), path: $path)
 } 

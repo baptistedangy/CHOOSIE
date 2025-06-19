@@ -10,8 +10,9 @@ struct CreateMissionView: View {
     @State private var selectedParticipantIndex: Int = -1
     @State private var showCustomParticipantField: Bool = false
     @State private var customParticipantText: String = ""
-    @State private var tirageOption: String = "now"
-    @State private var scheduledDate: Date = Calendar.current.date(byAdding: .minute, value: 10, to: Date()) ?? Date()
+    @State private var minAmountText: String = ""
+    @State private var minAmountError: String? = nil
+    @FocusState private var minAmountFieldFocused: Bool
     private var amountOptions: [Int] { Array(1...1000) + [-1] }
 
     struct MissionSuggestion: Identifiable, Hashable {
@@ -21,14 +22,14 @@ struct CreateMissionView: View {
     }
 
     let suggestions: [MissionSuggestion] = [
-        .init(name: "Go faire les courses !", icon: "🛒"),
-        .init(name: "Opération cadeau surprise 🎉", icon: "🎁"),
-        .init(name: "Mission colis express", icon: "📦"),
+        .init(name: "Jackpot courses !", icon: "🛒"),
+        .init(name: "Jackpot cadeau surprise 🎉", icon: "🎁"),
+        .init(name: "Jackpot express", icon: "📦"),
         .init(name: "Soirée entre potes 🍻", icon: "🍻"),
         .init(name: "Régalons-nous !", icon: "🍔"),
-        .init(name: "Grand ménage de printemps", icon: "🧹"),
-        .init(name: "Aventure à l'autre bout du monde", icon: "✈️"),
-        .init(name: "Anniv' de folie !", icon: "🎂"),
+        .init(name: "Jackpot de printemps", icon: "🧹"),
+        .init(name: "Jackpot aventure", icon: "✈️"),
+        .init(name: "Jackpot anniversaire !", icon: "🎂"),
         .init(name: "Autre...", icon: "")
     ]
 
@@ -36,44 +37,39 @@ struct CreateMissionView: View {
         ZStack {
             Color.choosieBackground.ignoresSafeArea()
             VStack(spacing: 32) {
-                Text("Créer une mission")
+                Text("Créer un Jackpot")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.choosieLila)
                     .padding(.top, 16)
 
                 VStack(spacing: 20) {
-                    HStack {
-                        Text("📝")
-                            .font(.system(size: 32))
-                            .padding(.trailing, 8)
-                        VStack(alignment: .leading) {
-                            Text("Choisissez une mission")
-                                .font(.headline)
-                            Picker("", selection: $selectedIndex) {
-                                Text("Choisis la mission…").tag(-1)
-                                ForEach(0..<suggestions.count, id: \ .self) { idx in
-                                    Text("\(suggestions[idx].icon)  \(suggestions[idx].name)")
-                                        .tag(idx)
-                                }
+                    // Section défi libre + suggestions
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Choisissez un défi")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.choosieLila)
+                        TextField("Décris ton défi (ex : 🍕 Pizza du vendredi, 🎁 Cadeau pour Léa...)", text: $customMissionName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: customMissionName) { newValue in
+                                viewModel.missionName = newValue
                             }
-                            .pickerStyle(MenuPickerStyle())
-                            .onChange(of: selectedIndex) { newValue in
-                                if newValue == -1 {
-                                    viewModel.missionName = ""
-                                } else if suggestions[newValue].name == "Autre..." {
-                                    viewModel.missionName = customMissionName
-                                } else {
-                                    viewModel.missionName = suggestions[newValue].name
+                        // Suggestions
+                        HStack(spacing: 10) {
+                            ForEach(["🍕 Pizza party", "🍻 Première tournée", "🎁 Cadeau commun", "🍣 Déj entre collègues", "🚖 Chauffeur désigné"], id: \.self) { suggestion in
+                                Button(action: {
+                                    customMissionName = suggestion
+                                    viewModel.missionName = suggestion
+                                }) {
+                                    Text(suggestion)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 8)
+                                        .background(Color.choosieLila.opacity(0.12))
+                                        .foregroundColor(.choosieLila)
+                                        .cornerRadius(16)
+                                        .font(.system(size: 16, weight: .medium, design: .rounded))
                                 }
-                            }
-                            if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
-                                TextField("Nom de la mission", text: $customMissionName)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .onChange(of: customMissionName) { newValue in
-                                        if selectedIndex != -1 && suggestions[selectedIndex].name == "Autre..." {
-                                            viewModel.missionName = newValue
-                                        }
-                                    }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                     }
@@ -81,56 +77,87 @@ struct CreateMissionView: View {
                     .background(Color.choosieCard)
                     .cornerRadius(20)
                     .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
-                }
 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Quand doit avoir lieu le tirage ?")
-                        .font(.headline)
-                    HStack(spacing: 24) {
-                        Button(action: { tirageOption = "now" }) {
-                            HStack {
-                                Image(systemName: tirageOption == "now" ? "largecircle.fill.circle" : "circle")
+                    // Section montant minimum
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Quel est le montant minimum que chaque participant devra miser ?")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.choosieLila)
+                        HStack(spacing: 0) {
+                            TextField("0.00 €", text: $minAmountText)
+                                .font(.system(size: 24, weight: .regular, design: .rounded))
+                                .foregroundColor(Color.choosieLila.opacity(0.85))
+                                .multilineTextAlignment(.center)
+                                .frame(minWidth: 80, maxWidth: 120)
+                                .padding(.vertical, 12)
+                                .padding(.horizontal, 8)
+                                .focused($minAmountFieldFocused)
+                                .animation(.easeOut(duration: 0.22), value: minAmountFieldFocused)
+                            Text(" €")
+                                .font(.system(size: 24, weight: .regular, design: .rounded))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
+                        }
+                        .frame(maxWidth: 180)
+                        // Suggestions rapides
+                        HStack(spacing: 10) {
+                            ForEach([
+                                ("😌", "5"),
+                                ("😅", "10"),
+                                ("🤑", "20"),
+                                ("🤯", "50"),
+                                ("💸", "100")
+                            ], id: \ .1) { emoji, value in
+                                Button(action: {
+                                    minAmountText = value
+                                    if let v = Double(value) { viewModel.minAmount = v }
+                                    minAmountError = nil
+                                }) {
+                                    HStack(spacing: 4) {
+                                        Text(emoji)
+                                        Text("\(value) €")
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 8)
+                                    .background(Color.choosieLila.opacity(0.12))
                                     .foregroundColor(.choosieLila)
-                                Text("Maintenant")
+                                    .cornerRadius(16)
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        Button(action: { tirageOption = "later" }) {
-                            HStack {
-                                Image(systemName: tirageOption == "later" ? "largecircle.fill.circle" : "circle")
-                                    .foregroundColor(.choosieLila)
-                                Text("Plus tard")
-                            }
+                        if let error = minAmountError {
+                            Text(error)
+                                .foregroundColor(.red)
+                                .font(.caption)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        Text("Chaque participant devra au moins miser ce montant pour rejoindre le Jackpot.")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .padding(.top, 2)
                     }
-                    if tirageOption == "later" {
-                        DatePicker("Date et heure du tirage", selection: $scheduledDate, in: Date()..., displayedComponents: [.date, .hourAndMinute])
-                            .datePickerStyle(.compact)
-                            .labelsHidden()
-                            .padding(.leading, 8)
-                    }
+                    .padding()
+                    .background(Color.choosieCard)
+                    .cornerRadius(20)
+                    .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
                 }
-                .padding()
-                .background(Color.choosieCard)
-                .cornerRadius(16)
-                .shadow(color: Color.choosieLila.opacity(0.08), radius: 4, x: 0, y: 2)
 
                 Button(action: {
-                    if viewModel.createMission(drawDate: tirageOption == "later" ? scheduledDate : nil) {
-                        navigateToShare = true
-                    }
+                    viewModel.createJackpot()
+                    navigateToShare = true
                 }) {
                     Text("Créer")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(viewModel.canCreate ? Color.choosieLila : Color.gray)
+                        .background(viewModel.canCreateJackpot ? Color.choosieLila : Color.gray)
                         .foregroundColor(.white)
                         .cornerRadius(16)
                         .shadow(color: Color.choosieLila.opacity(0.15), radius: 8, x: 0, y: 4)
                 }
-                .disabled(!viewModel.canCreate || selectedIndex == -1)
+                .disabled(!viewModel.canCreateJackpot)
                 .padding(.horizontal, 8)
                 NavigationLink(destination: ShareView(mission: viewModel.lastCreatedMission, code: viewModel.generatedCode ?? "", path: $path), isActive: $navigateToShare) {
                     EmptyView()

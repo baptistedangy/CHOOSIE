@@ -7,5 +7,5 @@ struct MissionModel: Identifiable, Codable, Hashable {
     let inviteCode: String
     var loserName: String? = nil
     var isPending: Bool = false
-    var drawDate: Date? = nil
+    let minAmount: Double
 } 

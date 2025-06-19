@@ -14,12 +14,12 @@ struct MissionHistoryView: View {
     
     var body: some View {
         VStack {
-            Text("Historique des missions")
+            Text("Historique des Jackpots")
                 .font(.largeTitle)
                 .padding(.top)
             if filteredMissions.isEmpty {
                 Spacer()
-                Text("Aucune mission terminée.")
+                Text("Aucun Jackpot terminé.")
                     .foregroundColor(.gray)
                 Spacer()
             } else {
