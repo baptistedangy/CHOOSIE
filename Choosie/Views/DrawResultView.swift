@@ -34,7 +34,11 @@ struct DrawResultView: View {
     }
 }
 
-#Preview {
-    @State var path = NavigationPath()
-    DrawResultView(viewModel: DrawResultViewModel(winnerName: "Moi", amountWon: 40), path: $path)
+#Preview("Résultat du tirage") {
+    NavigationStack {
+        DrawResultView(
+            viewModel: DrawResultViewModel(winnerName: "Moi", amountWon: 40),
+            path: .constant(NavigationPath())
+        )
+    }
 } 

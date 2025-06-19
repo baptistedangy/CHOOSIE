@@ -520,7 +520,8 @@ struct HistoryMissionsListSection: View {
     }
 }
 
-#Preview {
-    @State var path = NavigationPath()
-    HomeView(path: $path)
+#Preview("Accueil") {
+    NavigationStack {
+        HomeView(path: .constant(NavigationPath()))
+    }
 } 

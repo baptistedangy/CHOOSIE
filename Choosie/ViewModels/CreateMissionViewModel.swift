@@ -4,14 +4,15 @@ class CreateMissionViewModel: ObservableObject {
     @Published var missionName: String = ""
     @Published var generatedCode: String? = nil
     @Published var lastCreatedMission: MissionModel? = nil
-    @Published var minAmount: Double? = nil
+    @Published var minAmount: Double = 0.0
+    @Published var errorMessage: String?
 
     var canCreate: Bool {
         !missionName.isEmpty
     }
 
     var canCreateJackpot: Bool {
-        !missionName.isEmpty && (minAmount ?? 0) >= 1
+        !missionName.isEmpty && minAmount > 0
     }
 
     func createMission() -> Bool {
@@ -25,17 +26,24 @@ class CreateMissionViewModel: ObservableObject {
             inviteCode: code,
             loserName: nil,
             isPending: false,
-            minAmount: minAmount ?? 1
+            minAmount: minAmount
         )
         MissionService.shared.addMission(mission)
         self.lastCreatedMission = mission
         return true
     }
 
-    func createJackpot() -> Bool {
-        guard canCreateJackpot else { return false }
+    func createJackpot() -> MissionModel? {
+        guard canCreateJackpot else {
+            if missionName.isEmpty {
+                errorMessage = "Veuillez donner un nom à votre Jackpot"
+            } else if minAmount <= 0 {
+                errorMessage = "Le montant minimum doit être supérieur à 0"
+            }
+            return nil
+        }
+
         let code = Self.generateUniqueCode()
-        self.generatedCode = code
         let mission = MissionModel(
             id: UUID(),
             name: missionName,
@@ -43,21 +51,20 @@ class CreateMissionViewModel: ObservableObject {
             inviteCode: code,
             loserName: nil,
             isPending: false,
-            minAmount: minAmount ?? 1
+            minAmount: minAmount
         )
+        
         MissionService.shared.addMission(mission)
-        self.lastCreatedMission = mission
-        return true
+        return mission
     }
 
     private static func generateUniqueCode() -> String {
-        let chars = Array("abcdefghijklmnopqrstuvwxyz0123456789")
-        let minLen = 4, maxLen = 5
+        let chars = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        let codeLength = 6
         let allCodes = MissionService.shared.missions.map { $0.inviteCode }
         var code: String
         repeat {
-            let len = Int.random(in: minLen...maxLen)
-            code = String((0..<len).map { _ in chars.randomElement()! })
+            code = String((0..<codeLength).map { _ in chars.randomElement()! })
         } while allCodes.contains(code)
         return code
     }

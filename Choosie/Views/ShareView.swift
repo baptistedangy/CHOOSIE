@@ -2,12 +2,14 @@ import SwiftUI
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(AppKit)
+import AppKit
+#endif
 
 struct ShareView: View {
     var mission: MissionModel?
     let code: String
     @Binding var path: NavigationPath
-    @State private var navigateToParticipation = false
     @State private var showShareSheet = false
     @State private var showCopyAlert = false
     
@@ -30,21 +32,26 @@ struct ShareView: View {
                     )
                 Spacer()
             }
+            
             HStack(spacing: 16) {
                 Button(action: {
-                    #if canImport(UIKit)
+                    #if os(iOS)
                     UIPasteboard.general.string = code
                     #else
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(code, forType: .string)
                     #endif
                     showCopyAlert = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        showCopyAlert = false
+                    }
                 }) {
-                    Label("Copier le code", systemImage: "doc.on.doc")
+                    Label("Copier", systemImage: "doc.on.doc")
                         .padding(8)
                         .background(Color.blue.opacity(0.15))
                         .cornerRadius(8)
                 }
+                
                 #if os(iOS)
                 Button(action: {
                     showShareSheet = true
@@ -54,23 +61,23 @@ struct ShareView: View {
                         .background(Color.green.opacity(0.15))
                         .cornerRadius(8)
                 }
-                #else
-                MacShareButton(message: "Rejoins ma mission sur Choosie avec ce code : \(code)")
                 #endif
-            }
-            .alert(isPresented: $showCopyAlert) {
-                Alert(title: Text("Code copié !"), message: Text("Le code a été copié dans le presse-papier."), dismissButton: .default(Text("OK")))
             }
             #if os(iOS)
             .sheet(isPresented: $showShareSheet) {
-                ShareSheet(activityItems: ["Rejoins ma mission sur Choosie avec ce code : \(code)"])
+                ShareSheet(activityItems: ["Rejoins mon Jackpot avec le code : \(code)"])
             }
             #endif
-            Spacer()
+            
+            if showCopyAlert {
+                Text("Code copié !")
+                    .foregroundColor(.green)
+                    .transition(.opacity)
+            }
+            
             Button(action: {
                 if let mission = mission {
-                    MissionService.shared.markMissionAsPending(inviteCode: mission.inviteCode)
-                    self.navigateToParticipation = true
+                    path.append(mission)
                 }
             }) {
                 Text("Continuer")
@@ -80,18 +87,8 @@ struct ShareView: View {
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
-            NavigationLink(
-                destination: Group {
-                    if let mission = mission {
-                        ParticipationView(mission: mission, path: $path)
-                    } else {
-                        EmptyView()
-                    }
-                },
-                isActive: $navigateToParticipation
-            ) {
-                EmptyView()
-            }
+            
+            Spacer()
         }
         .padding()
     }
@@ -145,7 +142,12 @@ struct MacShareButton: View {
 }
 #endif
 
-#Preview {
-    @State var path = NavigationPath()
-    return ShareView(mission: nil, code: "X4E2LQ", path: $path)
+#Preview("Partager") {
+    NavigationStack {
+        ShareView(
+            mission: nil,
+            code: "X4E2LQ",
+            path: .constant(NavigationPath())
+        )
+    }
 } 

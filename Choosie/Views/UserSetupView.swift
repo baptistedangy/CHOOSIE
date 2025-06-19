@@ -2,63 +2,75 @@ import SwiftUI
 
 struct UserSetupView: View {
     @Binding var path: NavigationPath
-    @State private var name: String = ""
-    @State private var navigateToHome = false
-    @ObservedObject private var userManager = UserManager.shared
+    @State private var username = ""
+    @State private var errorMessage: String?
+    @StateObject private var userManager = UserManager.shared
     
     var body: some View {
-        VStack(spacing: 32) {
-            Spacer()
-            Text("Bienvenue sur Potpotes !")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            Text("Quel est votre prénom ou pseudo ?")
-                .font(.title2)
-            ZStack {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color.white.opacity(0.18))
-                    .background(.ultraThinMaterial)
-                    .blur(radius: 0.5)
-                    .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
-                HStack {
-                    Image(systemName: "person")
-                        .foregroundColor(.white.opacity(0.5))
-                    TextField("Votre nom", text: $name)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(maxWidth: 250)
-#if os(iOS)
-                        .textInputAutocapitalization(.words)
-                        .disableAutocorrection(true)
-#endif
+        ZStack {
+            Color.choosieBackground.ignoresSafeArea()
+            VStack(spacing: 32) {
+                Text("Bienvenue sur Choosie !")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.choosieTurquoise)
+                
+                Text("Comment souhaites-tu être appelé ?")
+                    .font(.system(size: 18, weight: .regular, design: .rounded))
+                    .foregroundColor(.gray)
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Color.white.opacity(0.18))
+                        .background(.ultraThinMaterial)
+                        .blur(radius: 0.5)
+                        .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
+                    
+                    HStack {
+                        Image(systemName: "person")
+                            .foregroundColor(.white.opacity(0.5))
+                        TextField("Ton pseudo", text: $username)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(maxWidth: 220)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 14)
                 }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 14)
-            }
-            Button(action: {
-                let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmed.isEmpty {
-                    userManager.setDisplayName(trimmed)
-                    navigateToHome = true
+                
+                if let error = errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .font(.caption)
                 }
-            }) {
-                Text("Continuer")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.gray : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                
+                Button(action: {
+                    if username.isEmpty {
+                        errorMessage = "Le pseudo ne peut pas être vide"
+                        return
+                    }
+                    userManager.setDisplayName(username)
+                    path.append(AppRoute.home)
+                }) {
+                    Text("Continuer")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(username.isEmpty ? Color.gray.opacity(0.3) : Color.choosieTurquoise)
+                        .foregroundColor(.white)
+                        .cornerRadius(14)
+                }
+                .disabled(username.isEmpty)
+                .frame(maxWidth: 220)
+                
+                Spacer()
             }
-            .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            NavigationLink(destination: HomeView(path: $path), isActive: $navigateToHome) {
-                EmptyView()
-            }
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 }
 
-#Preview {
-    @State var path = NavigationPath()
-    return UserSetupView(path: $path)
+#Preview("Configuration utilisateur") {
+    NavigationStack {
+        UserSetupView(path: .constant(NavigationPath()))
+    }
 } 

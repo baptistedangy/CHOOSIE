@@ -98,8 +98,7 @@ struct SlotMachineView: View {
         winnerIndex = loserIdx
         // Calculer l'index final dans la liste étendue pour que le gagnant soit centré
         let finalIdx = centerRow + loserIdx
-        let totalDistance = CGFloat(finalIdx - from) * rowHeight
-        // Animation : phase rapide puis ralentissement (easeOut)
+        // Animation : phase rapide puis ralentissement (easeOut)
         withAnimation(.timingCurve(0.1, 0.9, 0.2, 1, duration: animationDuration)) {
             offset = -CGFloat(finalIdx - centerRow) * rowHeight
         }

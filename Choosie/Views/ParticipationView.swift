@@ -209,7 +209,19 @@ struct ParticipationView: View {
     }
 }
 
-#Preview {
-    @State var path = NavigationPath()
-    ParticipationView(mission: MissionModel(id: UUID(), name: "Courses", code: "X4E2LQ", inviteCode: "abcd", loserName: nil, isPending: false, minAmount: 1), path: $path)
+#Preview("Participation") {
+    NavigationStack {
+        ParticipationView(
+            mission: MissionModel(
+                id: UUID(),
+                name: "Courses",
+                code: "X4E2LQ",
+                inviteCode: "abcd",
+                loserName: nil,
+                isPending: false,
+                minAmount: 1
+            ),
+            path: .constant(NavigationPath())
+        )
+    }
 } 

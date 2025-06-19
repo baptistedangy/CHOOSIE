@@ -3,8 +3,7 @@ import SwiftUI
 struct JoinMissionView: View {
     @Binding var path: NavigationPath
     @StateObject private var viewModel = JoinMissionViewModel()
-    @State private var navigateToParticipation = false
-
+    
     var body: some View {
         ZStack {
             Color.choosieBackground.ignoresSafeArea()
@@ -38,9 +37,12 @@ struct JoinMissionView: View {
                         .font(.caption)
                         .padding(.top, -12)
                 }
+                
                 Button(action: {
                     if viewModel.joinMission() {
-                        navigateToParticipation = true
+                        if let mission = viewModel.foundMission {
+                            path.append(mission)
+                        }
                     }
                 }) {
                     Text("Rejoindre")
@@ -53,18 +55,7 @@ struct JoinMissionView: View {
                 }
                 .disabled(!viewModel.canJoin)
                 .frame(maxWidth: 220)
-                NavigationLink(
-                    destination: Group {
-                        if let mission = viewModel.foundMission {
-                            ParticipationView(mission: mission, path: $path)
-                        } else {
-                            EmptyView()
-                        }
-                    },
-                    isActive: $navigateToParticipation
-                ) {
-                    EmptyView()
-                }
+                
                 Spacer()
             }
             .padding()
@@ -72,7 +63,8 @@ struct JoinMissionView: View {
     }
 }
 
-#Preview {
-    @State var path = NavigationPath()
-    JoinMissionView(path: $path)
+#Preview("Rejoindre un Jackpot") {
+    NavigationStack {
+        JoinMissionView(path: .constant(NavigationPath()))
+    }
 } 
