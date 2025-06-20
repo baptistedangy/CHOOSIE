@@ -26,7 +26,8 @@ class CreateMissionViewModel: ObservableObject {
             inviteCode: code,
             loserName: nil,
             isPending: false,
-            minAmount: minAmount
+            minAmount: minAmount,
+            createdBy: UserManager.shared.userId
         )
         MissionService.shared.addMission(mission)
         self.lastCreatedMission = mission
@@ -51,7 +52,8 @@ class CreateMissionViewModel: ObservableObject {
             inviteCode: code,
             loserName: nil,
             isPending: false,
-            minAmount: minAmount
+            minAmount: minAmount,
+            createdBy: UserManager.shared.userId
         )
         
         MissionService.shared.addMission(mission)

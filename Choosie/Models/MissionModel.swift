@@ -8,4 +8,6 @@ struct MissionModel: Identifiable, Codable, Hashable {
     var loserName: String? = nil
     var isPending: Bool = false
     let minAmount: Double
+    let createdBy: String
+    var hasPaid: Bool = false
 } 

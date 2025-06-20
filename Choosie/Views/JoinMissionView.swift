@@ -6,23 +6,21 @@ struct JoinMissionView: View {
     
     var body: some View {
         ZStack {
-            Color.choosieBackground.ignoresSafeArea()
+            Color.choosieLightBackground.ignoresSafeArea()
             VStack(spacing: 32) {
                 Text("Rejoindre un Jackpot")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.choosieTurquoise)
                 Text("Entre le code du Jackpot pour participer !")
                     .font(.system(size: 18, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.choosieViolet)
                 ZStack {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.white.opacity(0.18))
-                        .background(.ultraThinMaterial)
-                        .blur(radius: 0.5)
-                        .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
+                        .fill(Color.choosieCardLight)
+                        .shadow(color: Color.choosieTurquoise.opacity(0.10), radius: 8, x: 0, y: 2)
                     HStack {
                         Image(systemName: "key")
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.choosieTurquoise)
                         TextField("Code du Jackpot", text: $viewModel.code)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(maxWidth: 220)

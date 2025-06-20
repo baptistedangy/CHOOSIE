@@ -31,11 +31,11 @@ struct ParticipationView: View {
                         .font(.title)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.purple)
+                        .foregroundColor(.choosieViolet)
                     Text("💰 Il reçoit \(amountFormatter(result.amount)) € pour l'accomplir.")
                         .font(.title2)
                         .fontWeight(.semibold)
-                        .foregroundColor(.green)
+                        .foregroundColor(.choosieTurquoise)
                         .padding(.bottom, 32)
                     Button(action: {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -45,7 +45,7 @@ struct ParticipationView: View {
                         Text("Retour à l'accueil")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.choosieViolet)
                             .foregroundColor(.white)
                             .cornerRadius(16)
                     }
@@ -54,7 +54,7 @@ struct ParticipationView: View {
                 }
                 .frame(maxWidth: 500)
                 .frame(maxHeight: .infinity, alignment: .center)
-                .background(Color.gray.opacity(0.08))
+                .background(Color.choosieCardLight)
                 .padding()
             } else {
                 VStack(spacing: 24) {
@@ -83,7 +83,7 @@ struct ParticipationView: View {
 #endif
                                         .background(
                                             RoundedRectangle(cornerRadius: 18)
-                                                .fill(Color.white.opacity(0.08))
+                                                .fill(Color.white)
                                         )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: 18)
@@ -115,7 +115,7 @@ struct ParticipationView: View {
                                     .padding(.top, 2)
                             }
                             .padding(24)
-                            .background(Color.choosieCard)
+                            .background(Color.choosieCardLight)
                             .cornerRadius(20)
                             .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
                             // Bouton payer
@@ -219,7 +219,8 @@ struct ParticipationView: View {
                 inviteCode: "abcd",
                 loserName: nil,
                 isPending: false,
-                minAmount: 1
+                minAmount: 1,
+                createdBy: "PREVIEW_USER"
             ),
             path: .constant(NavigationPath())
         )

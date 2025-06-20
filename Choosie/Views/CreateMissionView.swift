@@ -38,12 +38,12 @@ struct CreateMissionView: View {
 
     var body: some View {
         ZStack {
-            Color.choosieBackground.ignoresSafeArea()
+            Color.choosieLightBackground.ignoresSafeArea()
             ScrollView(showsIndicators: false) {
                 VStack(spacing: verticalSpacing) {
                     Text("Créer un Jackpot")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.choosieLila)
+                        .foregroundColor(.choosieViolet)
                         .padding(.top, 16)
                         .frame(maxWidth: .infinity, alignment: .center)
 
@@ -87,13 +87,10 @@ struct CreateMissionView: View {
             // Champ de saisie
             ZStack {
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(Color.white.opacity(0.18))
-                    .background(.ultraThinMaterial)
-                    .blur(radius: 0.5)
-                
+                    .fill(Color.white)
                 HStack {
                     Image(systemName: "person")
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(.choosieLila.opacity(0.5))
                     TextField("Décris ton défi (ex : 🍕 Pizza du vendredi...)", text: $customMissionName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .onChange(of: customMissionName) { _, newValue in
@@ -129,7 +126,7 @@ struct CreateMissionView: View {
             }
         }
         .padding()
-        .background(Color.choosieCard)
+        .background(Color.choosieCardLight)
         .cornerRadius(cornerRadius)
         .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
     }
@@ -162,7 +159,7 @@ struct CreateMissionView: View {
                         .font(.system(size: 24, weight: .regular, design: .rounded))
                         .foregroundColor(.secondary)
                 }
-                .background(Color.white.opacity(0.1))
+                .background(Color.white)
                 .cornerRadius(12)
                 Spacer()
             }
@@ -206,7 +203,7 @@ struct CreateMissionView: View {
             }
         }
         .padding()
-        .background(Color.choosieCard)
+        .background(Color.choosieCardLight)
         .cornerRadius(cornerRadius)
         .shadow(color: Color.choosieLila.opacity(0.08), radius: 8, x: 0, y: 4)
     }

@@ -8,7 +8,7 @@ struct UserSetupView: View {
     
     var body: some View {
         ZStack {
-            Color.choosieBackground.ignoresSafeArea()
+            Color.choosieLightBackground.ignoresSafeArea()
             VStack(spacing: 32) {
                 Text("Bienvenue sur Choosie !")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -16,18 +16,16 @@ struct UserSetupView: View {
                 
                 Text("Comment souhaites-tu être appelé ?")
                     .font(.system(size: 18, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.choosieViolet)
                 
                 ZStack {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.white.opacity(0.18))
-                        .background(.ultraThinMaterial)
-                        .blur(radius: 0.5)
-                        .shadow(color: Color.white.opacity(0.10), radius: 8, x: 0, y: 2)
+                        .fill(Color.choosieCardLight)
+                        .shadow(color: Color.choosieTurquoise.opacity(0.10), radius: 8, x: 0, y: 2)
                     
                     HStack {
                         Image(systemName: "person")
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.choosieTurquoise)
                         TextField("Ton pseudo", text: $username)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(maxWidth: 220)

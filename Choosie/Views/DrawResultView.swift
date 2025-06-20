@@ -10,13 +10,15 @@ struct DrawResultView: View {
             Text("🎉 Gagnant du tirage 🎉")
                 .font(.title)
                 .fontWeight(.bold)
+                .foregroundColor(.choosieViolet)
             Text(viewModel.winnerName)
                 .font(.largeTitle)
                 .fontWeight(.semibold)
-                .foregroundColor(.purple)
+                .foregroundColor(.choosieTurquoise)
             Text("Montant gagné : \(viewModel.amountWon.stringValue) €")
                 .font(.title2)
                 .padding(.top)
+                .foregroundColor(.choosieViolet)
             Spacer()
             Button(action: {
                 path = NavigationPath()
@@ -24,13 +26,14 @@ struct DrawResultView: View {
                 Text("Retour à l'accueil")
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.choosieTurquoise)
                     .foregroundColor(.white)
                     .cornerRadius(12)
             }
             Spacer()
         }
         .padding()
+        .background(Color.choosieLightBackground)
     }
 }
 

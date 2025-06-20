@@ -23,22 +23,22 @@ struct CardButton: View {
                 Text(icon)
                     .font(.system(size: 44))
                     .padding(16)
-                    .background(color.opacity(0.15))
+                    .background(color.opacity(0.18))
                     .clipShape(Circle())
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.black)
+                        .foregroundColor(color == .choosieViolet ? .choosieViolet : .choosieTurquoise)
                     Text(subtitle)
                         .font(.system(size: 15, weight: .regular, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(color == .choosieViolet ? .choosieTurquoise : .choosieViolet)
                 }
                 Spacer()
             }
             .padding()
-            .background(Color.choosieCard)
+            .background(Color.choosieCardLight)
             .cornerRadius(24)
-            .shadow(color: color.opacity(0.18), radius: 12, x: 0, y: 6)
+            .shadow(color: color.opacity(0.13), radius: 12, x: 0, y: 6)
             .scaleEffect(isPressed ? 0.96 : 1.0)
         }
         .buttonStyle(PlainButtonStyle())

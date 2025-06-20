@@ -40,6 +40,12 @@ class MissionService: ObservableObject {
         missions.removeAll { $0.id == mission.id }
     }
 
+    func updateMission(_ mission: MissionModel) {
+        if let idx = missions.firstIndex(where: { $0.id == mission.id }) {
+            missions[idx] = mission
+        }
+    }
+
     // Persistance locale
     private func save() {
         if let data = try? JSONEncoder().encode(missions) {

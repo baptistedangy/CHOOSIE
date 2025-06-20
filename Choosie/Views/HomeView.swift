@@ -8,12 +8,8 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [.choosieLila, .choosieTurquoise, .choosieOrange]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.choosieLightBackground
+                .ignoresSafeArea()
 
             VStack(spacing: 36) {
                 HStack {
@@ -21,28 +17,31 @@ struct HomeView: View {
                     Button(action: { showProfile = true }) {
                         Image(systemName: "person.circle")
                             .font(.system(size: 32))
-                            .foregroundColor(.choosieLila)
+                            .foregroundColor(.choosieViolet)
                             .padding(8)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .shadow(color: .choosieViolet.opacity(0.12), radius: 6, x: 0, y: 2)
                     }
                 }
                 .padding(.top, 12)
-                MascotView(mood: "👋")
+                MascotView(mood: "🎉")
                 Text("Bienvenue sur Potpotes !")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .shadow(radius: 4)
-                    .padding(.bottom, 8)
-                Text("Joue, partage, et tire au sort des missions fun entre amis !")
-                    .font(.system(size: 18, weight: .regular, design: .rounded))
-                    .foregroundColor(.white.opacity(0.85))
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .foregroundColor(.choosieViolet)
+                    .shadow(radius: 2)
+                    .padding(.bottom, 4)
+                Text("Payer c'est jouer!")
+                    .font(.system(size: 18, weight: .medium, design: .rounded))
+                    .foregroundColor(.choosieTurquoise)
                     .multilineTextAlignment(.center)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 28)
                 VStack(spacing: 24) {
                     CardButton(
                         icon: "🎲",
                         title: "Créer un Jackpot",
                         subtitle: "Lance un nouveau défi !",
-                        color: .choosieLila
+                        color: .choosieViolet
                     ) {
                         path.append("create")
                     }
@@ -94,7 +93,7 @@ struct MesJackpotsEnAttenteSection: View {
 
     var missionsEnAttente: [MissionModel] {
         missionService.missions.filter { mission in
-            mission.isPending
+            mission.createdBy == UserManager.shared.userId && mission.loserName == nil
         }
     }
 
@@ -119,7 +118,7 @@ struct MesJackpotsEnAttenteSection: View {
                     }
                 }
                 .padding()
-                .background(Color.choosieCard)
+                .background(Color.choosieCardLight.opacity(0.7))
                 .cornerRadius(16)
                 .shadow(color: Color.choosieTurquoise.opacity(0.08), radius: 4, x: 0, y: 2)
             }
@@ -193,7 +192,7 @@ struct MissionAttenteCard: View {
             }
         }
         .padding(12)
-        .background(Color.choosieCard.opacity(0.7))
+        .background(Color.choosieCardLight.opacity(0.7))
         .cornerRadius(14)
         .shadow(color: Color.choosieLila.opacity(0.08), radius: 6, x: 0, y: 2)
     }
@@ -283,7 +282,7 @@ struct HistoriqueJackpotsPage: View {
                                     .buttonStyle(PlainButtonStyle())
                                 }
                                 .padding(8)
-                                .background(Color.choosieCard.opacity(0.7))
+                                .background(Color.choosieCardLight.opacity(0.7))
                                 .cornerRadius(14)
                             }
                         }
@@ -453,7 +452,7 @@ struct SectionHeader: View {
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 8)
-            .background(Color.choosieCard.opacity(0.15))
+            .background(Color.choosieCardLight.opacity(0.15))
             .cornerRadius(10)
         }
         .buttonStyle(PlainButtonStyle())
@@ -512,7 +511,7 @@ struct HistoryMissionsListSection: View {
                         .buttonStyle(PlainButtonStyle())
                     }
                     .padding(8)
-                    .background(Color.choosieCard.opacity(0.7))
+                    .background(Color.choosieCardLight.opacity(0.7))
                     .cornerRadius(14)
                 }
             }

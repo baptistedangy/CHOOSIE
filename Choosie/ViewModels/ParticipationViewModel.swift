@@ -10,7 +10,7 @@ struct Participant: Identifiable {
 class ParticipationViewModel: ObservableObject {
     let mission: MissionModel
     @Published var participants: [Participant]
-    @Published var hasPaid: Bool = false
+    @Published var hasPaid: Bool
     @Published var drawResult: (winner: Participant, amount: Decimal)? = nil
 
     var amountPerParticipant: Decimal {
@@ -38,8 +38,9 @@ class ParticipationViewModel: ObservableObject {
 
     init(mission: MissionModel) {
         self.mission = mission
+        self.hasPaid = mission.hasPaid
         // Le premier participant est l'utilisateur courant, contribution par défaut au minimum
-        self.participants = [Participant(name: "Moi", hasPaid: false, contribution: Decimal(mission.minAmount))]
+        self.participants = [Participant(name: "Moi", hasPaid: mission.hasPaid, contribution: Decimal(mission.minAmount))]
 #if DEBUG
         // Ajouter quelques participants fictifs pour le debug, contribution au minimum
         let needed = 2
@@ -61,11 +62,16 @@ class ParticipationViewModel: ObservableObject {
     }
 
     func pay(amount: Decimal) {
-        // Marquer l'utilisateur courant comme ayant payé et enregistrer le montant
+        // Marquer la mission comme payée pour l'utilisateur courant
+        var updatedMission = mission
+        updatedMission.hasPaid = true
+        MissionService.shared.updateMission(updatedMission)
+        // Mettre à jour l'état local
+        self.hasPaid = true
+        // Mettre à jour la contribution de l'utilisateur courant
         if let idx = participants.firstIndex(where: { $0.name == "Moi" }) {
-            participants[idx].hasPaid = true
             participants[idx].contribution = amount
-            hasPaid = true
+            participants[idx].hasPaid = true
         }
     }
 
@@ -98,7 +104,7 @@ class ParticipationViewModel: ObservableObject {
         let completed = CompletedMission(
             id: UUID(),
             missionName: mission.name,
-            totalAmount: 0,
+            totalAmount: (totalPot as NSDecimalNumber).doubleValue,
             participants: participants.map { $0.name },
             winner: loserName,
             createdBy: UUID(uuidString: UserManager.shared.userId) ?? UUID(),

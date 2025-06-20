@@ -29,7 +29,7 @@ struct SlotMachineView: View {
         VStack(spacing: 32) {
             ZStack {
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.gray.opacity(0.15))
+                    .fill(Color.choosieCardLight)
                     .frame(width: 180, height: rowHeight * CGFloat(visibleRows))
                     .shadow(radius: 8)
                 VStack(spacing: 0) {
@@ -52,7 +52,7 @@ struct SlotMachineView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.purple)
+                        .foregroundColor(.choosieViolet)
                         .padding(.top, 12)
                     Button("Créer une nouvelle mission") {
                         showContinue = true
@@ -60,7 +60,7 @@ struct SlotMachineView: View {
                     .font(.title3)
                     .padding(.horizontal, 32)
                     .padding(.vertical, 12)
-                    .background(Color.blue)
+                    .background(Color.choosieTurquoise)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
